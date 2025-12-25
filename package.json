@@ -1,0 +1,22 @@
+{
+  "name": "craftfiles",
+  "version": "1.0.0",
+  "description": "A CLI tool to initialize and generate config files for JS/TS projects",
+  "main": "src/index.js",
+  "bin": {
+    "craftfiles": "./bin/craftfiles.js"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["cli", "init", "biome", "prettier", "config", "js", "ts"],
+  "author": "Juan Ignacio Jara Caceres 🇳🇮",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "commander": "^11.0.0",
+    "inquirer": "^9.1.4",
+    "fs-extra": "^11.1.1",
+    "chalk": "^5.3.0"
+  }
+}
