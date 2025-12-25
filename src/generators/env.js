@@ -1,4 +1,4 @@
-const fs = require('fs-extra');
+import fs from 'fs-extra';
 
 async function generateEnv() {
   const envContent = `# Environment Variables
@@ -8,7 +8,7 @@ DEBUG=true
 `;
 
   await fs.writeFile('.env', envContent);
-  console.log('.env generated!');
+  console.log('🔐 .env generated with basic variables!');
 }
 
-module.exports = { generateEnv };
+export { generateEnv };

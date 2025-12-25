@@ -1,9 +1,9 @@
-const { generateBiome } = require('./biome');
-const { generatePrettier } = require('./prettier');
-const { generateEnv } = require('./env');
-const { generateAgents } = require('./agents');
+import { generateBiome } from './biome.js';
+import { generatePrettier } from './prettier.js';
+import { generateEnv } from './env.js';
+import { generateAgents } from './agents.js';
 
-module.exports = {
+export {
   generateBiome,
   generatePrettier,
   generateEnv,

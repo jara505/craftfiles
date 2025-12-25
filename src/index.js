@@ -1,41 +1,75 @@
-const inquirer = require('inquirer');
-const fs = require('fs-extra');
-const path = require('path');
-const { detectProjectType } = require('./detectors');
-const { generateBiome, generatePrettier, generateEnv, generateAgents } = require('./generators');
+import inquirer from 'inquirer';
+import fs from 'fs-extra';
+import path from 'path';
+import { detectProjectType } from './detectors.js';
+import { generateBiome, generatePrettier, generateEnv, generateAgents } from './generators/index.js';
 
 async function initCommand() {
-  console.log('Welcome to CraftFiles! 🚀');
+  console.log('Welcome to CraftFiles! 🔨');
 
   const projectType = detectProjectType();
 
-  let questions = [];
+  // Check for existing files
+  const existingFiles = [];
+  if (fs.existsSync('biome.json')) existingFiles.push('biome.json');
+  if (fs.existsSync('.prettierrc')) existingFiles.push('.prettierrc');
+  if (fs.existsSync('.env')) existingFiles.push('.env');
+  if (fs.existsSync('AGENTS.md')) existingFiles.push('AGENTS.md');
 
-  if (projectType === 'js/ts') {
-    questions.push({
-      type: 'list',
-      name: 'linter',
-      message: 'Choose a linter/formatter (Biome includes both, Prettier is formatter only):',
-      choices: ['Biome', 'Prettier', 'None'],
-      default: 'Biome'
-    });
+  let overwrite = false;
+  if (existingFiles.length > 0) {
+    if (process.stdout.isTTY) {
+      const answer = await inquirer.prompt({
+        type: 'confirm',
+        name: 'overwrite',
+        message: `Some files already exist: ${existingFiles.join(', ')}. Overwrite them?`,
+        default: false
+      });
+      overwrite = answer.overwrite;
+    } else {
+      console.log(`Warning: Files already exist: ${existingFiles.join(', ')}. Skipping in non-interactive mode.`);
+      overwrite = false;
+    }
+    if (!overwrite) {
+      console.log('Operation cancelled or skipped.');
+      return;
+    }
   }
 
-  questions.push({
-    type: 'confirm',
-    name: 'env',
-    message: 'Generate .env file?',
-    default: true
-  });
+  let answers = { linter: 'Biome', env: true, agents: true }; // Defaults for testing
 
-  questions.push({
-    type: 'confirm',
-    name: 'agents',
-    message: 'Generate AGENTS.md file?',
-    default: true
-  });
+  // For interactive, check if TTY
+  if (process.stdout.isTTY) {
+    let questions = [];
 
-  const answers = await inquirer.prompt(questions);
+    if (projectType === 'js/ts') {
+      questions.push({
+        type: 'list',
+        name: 'linter',
+        message: 'Choose your code quality tool (Biome: linter + formatter in one, Prettier: formatter only):',
+        choices: ['Biome', 'Prettier', 'None'],
+        default: 'Biome'
+      });
+    }
+
+    questions.push({
+      type: 'confirm',
+      name: 'env',
+      message: 'Create .env file with basic environment variables?',
+      default: true
+    });
+
+    questions.push({
+      type: 'confirm',
+      name: 'agents',
+      message: 'Create AGENTS.md with instructions for AI tools?',
+      default: true
+    });
+
+    answers = await inquirer.prompt(questions);
+  } else {
+    console.log('Non-interactive mode: Using defaults.');
+  }
 
   // Generate files based on answers
   if (answers.linter === 'Biome') {
@@ -55,4 +89,4 @@ async function initCommand() {
   console.log('Done! Files generated. 🎉');
 }
 
-module.exports = { initCommand };
+export { initCommand };

@@ -18,17 +18,28 @@ craftfiles init
 
 This command detects if your project is JavaScript/TypeScript based and prompts you to choose which configuration files to generate, such as Biome (linter/formatter), Prettier (formatter), .env (environment variables), and AGENTS.md (instructions for AI tools).
 
+### Commands
+
+- `craftfiles init`: Initialize project with config files interactively.
+- `craftfiles clean`: Remove generated config files.
+
+### Options
+
+- `--help`, `-h`: Display help.
+- `--version`, `-V`: Show version.
+- `--creator`: Display creator info.
+
 ### Example
 
 ```bash
 $ craftfiles init
-Welcome to CraftFiles! 🚀
-? Choose a linter/formatter (Biome includes both, Prettier is formatter only): Biome
-? Generate .env file? Yes
-? Generate AGENTS.md file? Yes
-biome.json generated!
-.env generated!
-AGENTS.md generated!
+Welcome to CraftFiles! 🔨
+? Choose your code quality tool (Biome: linter + formatter in one, Prettier: formatter only): Biome
+? Create .env file with basic environment variables? Yes
+? Create AGENTS.md with instructions for AI tools? Yes
+⚙️ biome.json generated with best practices for JS/TS!
+🔐 .env generated with basic variables!
+🤖 AGENTS.md generated with AI guidelines!
 Done! Files generated. 🎉
 ```
 
