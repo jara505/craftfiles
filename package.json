@@ -1,5 +1,5 @@
 {
-  "name": "@jara505/craftfiles",
+  "name": "craftfiles",
   "version": "1.0.0",
   "description": "A CLI tool to initialize and generate config files for JS/TS projects",
   "type": "module",
