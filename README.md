@@ -5,7 +5,7 @@ CraftFiles is a CLI tool designed to initialize and generate configuration files
 ## Installation
 
 ```bash
-npm install -g craftfiles
+npm install -g @jara505/craftfiles
 ```
 
 ## Usage
@@ -13,15 +13,15 @@ npm install -g craftfiles
 Run the following command to start the interactive setup:
 
 ```bash
-craftfiles init
+@jara505/craftfiles init
 ```
 
 This command detects if your project is JavaScript/TypeScript based and prompts you to choose which configuration files to generate, such as Biome (linter/formatter), Prettier (formatter), .env (environment variables), and AGENTS.md (instructions for AI tools).
 
 ### Commands
 
-- `craftfiles init`: Initialize project with config files interactively.
-- `craftfiles clean`: Remove generated config files.
+- `@jara505/craftfiles init`: Initialize project with config files interactively.
+- `@jara505/craftfiles clean`: Remove generated config files.
 
 ### Options
 
@@ -32,7 +32,7 @@ This command detects if your project is JavaScript/TypeScript based and prompts 
 ### Example
 
 ```bash
-$ craftfiles init
+$ @jara505/craftfiles init
 Welcome to CraftFiles! 🔨
 ? Choose your code quality tool (Biome: linter + formatter in one, Prettier: formatter only): Biome
 ? Create .env file with basic environment variables? Yes
