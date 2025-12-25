@@ -5,13 +5,21 @@
   "type": "module",
   "main": "src/index.js",
   "bin": {
-    "craftfiles": "./bin/craftfiles.js"
+    "craftfiles": "bin/craftfiles.js"
   },
   "scripts": {
     "start": "node src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["cli", "init", "biome", "prettier", "config", "js", "ts"],
+  "keywords": [
+    "cli",
+    "init",
+    "biome",
+    "prettier",
+    "config",
+    "js",
+    "ts"
+  ],
   "author": "Juan Ignacio Jara Caceres 🇳🇮",
   "license": "UNLICENSED",
   "dependencies": {
