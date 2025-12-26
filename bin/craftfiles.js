@@ -2,9 +2,13 @@
 
 import { program } from 'commander';
 import { readFileSync } from 'fs';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
 import { initCommand } from '../src/index.js';
 
-const packageJson = JSON.parse(readFileSync(new URL('../package.json', import.meta.url)));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const packageJson = JSON.parse(readFileSync(join(__dirname, '../package.json')));
 const version = packageJson.version;
 
 program
