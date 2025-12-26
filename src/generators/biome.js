@@ -3,7 +3,7 @@ import path from 'path';
 
 async function generateBiome() {
   const biomeConfig = {
-    "$schema": "https://biomejs.dev/schemas/1.5.3/schema.json",
+    "$schema": "https://biomejs.dev/schemas/2.3.10/schema.json",
     "organizeImports": {
       "enabled": true
     },
@@ -14,9 +14,6 @@ async function generateBiome() {
         "style": {
           "noNonNullAssertion": "off",
           "useTemplate": "error"
-        },
-        "suspicious": {
-          "noExplicitAny": "warn"
         }
       }
     },
@@ -26,6 +23,21 @@ async function generateBiome() {
       "indentWidth": 2,
       "lineEnding": "lf",
       "lineWidth": 80
+    },
+    "javascript": {
+      "parser": {
+        "unsafeParameterDecoratorsEnabled": true
+      },
+      "formatter": {
+        "enabled": true
+      }
+    },
+    "assist": {
+      "actions": {
+        "source": {
+          "organizeImports": "on"
+        }
+      }
     }
   };
 
