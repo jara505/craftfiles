@@ -11,7 +11,6 @@ async function generateBiome() {
       "enabled": true,
       "rules": {
         "recommended": true,
-        "correctness": "error",
         "style": {
           "noNonNullAssertion": "off",
           "useTemplate": "error"
@@ -26,10 +25,7 @@ async function generateBiome() {
       "indentStyle": "space",
       "indentWidth": 2,
       "lineEnding": "lf",
-      "lineWidth": 80,
-      "bracketSpacing": true,
-      "semicolons": "asNeeded",
-      "trailingCommas": "es5"
+      "lineWidth": 80
     }
   };
 
