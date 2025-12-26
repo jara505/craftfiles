@@ -4,6 +4,9 @@ import path from 'path';
 async function generateBiome() {
   const biomeConfig = {
     "$schema": "https://biomejs.dev/schemas/2.3.10/schema.json",
+    "files": {
+      "ignore": ["dist/**"]
+    },
     "organizeImports": {
       "enabled": true
     },
@@ -14,6 +17,9 @@ async function generateBiome() {
         "style": {
           "noNonNullAssertion": "off",
           "useTemplate": "error"
+        },
+        "suspicious": {
+          "noExplicitAny": "warn"
         }
       }
     },
