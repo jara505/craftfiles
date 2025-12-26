@@ -5,7 +5,7 @@ async function generateBiome() {
   const biomeConfig = {
     "$schema": "https://biomejs.dev/schemas/2.3.10/schema.json",
     "files": {
-      "ignore": ["dist/**"]
+      "includes": ["**", "!dist/**"]
     },
     "organizeImports": {
       "enabled": true
