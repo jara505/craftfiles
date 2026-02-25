@@ -1,6 +1,7 @@
 import inquirer from 'inquirer';
 import fs from 'fs-extra';
 import { detectProjectType, detectExistingQualityTool, isTypeScriptProject } from './detectors.js';
+import { VALID_PROFILES } from './constants.js';
 import {
   generateBiome, getBiomeContent,
   generatePrettier, getPrettierContent,
@@ -9,15 +10,13 @@ import {
   generateAgents, getAgentsContent
 } from './generators/index.js';
 
-const validProfiles = ['backend', 'frontend'];
-
 async function initCommand(options = {}) {
   console.log('Welcome to CraftFiles! 🔨');
 
   const profile = options.env || null;
 
-  if (profile && !validProfiles.includes(profile)) {
-    console.log(`Unknown profile: "${profile}". Valid profiles: ${validProfiles.join(', ')}`);
+  if (profile && !VALID_PROFILES.includes(profile)) {
+    console.log(`Unknown profile: "${profile}". Valid profiles: ${VALID_PROFILES.join(', ')}`);
     return;
   }
 
