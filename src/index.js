@@ -1,8 +1,8 @@
 import inquirer from 'inquirer';
-import fs from 'fs-extra';
 import { detectProjectType, detectExistingQualityTool, isTypeScriptProject } from './detectors.js';
 import { VALID_PROFILES } from './constants.js';
 import { updateManifest } from './manifest.js';
+import { classifyFiles } from './file-comparator.js';
 import {
   generateBiome, getBiomeContent,
   generatePrettier, getPrettierContent,
@@ -153,23 +153,7 @@ async function initCommand(options = {}) {
     return;
   }
 
-  // Compare intended files against what's on disk
-  const toCreate = [];
-  const differing = [];
-  const upToDate = [];
-
-  for (const file of intendedFiles) {
-    if (fs.existsSync(file.filename)) {
-      const existing = fs.readFileSync(file.filename, 'utf-8');
-      if (existing === file.content) {
-        upToDate.push(file);
-      } else {
-        differing.push(file);
-      }
-    } else {
-      toCreate.push(file);
-    }
-  }
+  const { toCreate, differing } = classifyFiles(intendedFiles);
 
   // All files already match
   if (differing.length === 0 && toCreate.length === 0) {
