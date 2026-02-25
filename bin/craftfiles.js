@@ -18,9 +18,9 @@ program
   .option('--creator', 'Show creator info');
 
 program
-  .command('init')
-  .description('Initialize project with config files interactively')
-  .action(initCommand);
+  .command('init [profile]')
+  .description('Initialize project with config files (profile: backend, frontend)')
+  .action((profile) => initCommand(profile));
 
 program
   .command('clean')
