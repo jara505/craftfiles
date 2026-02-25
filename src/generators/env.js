@@ -6,6 +6,9 @@ PORT=3000
 DATABASE_URL=
 JWT_SECRET=
 `,
+  frontend: `API_URL=
+APP_ENV=development
+`,
 };
 
 async function generateEnv(profile) {
