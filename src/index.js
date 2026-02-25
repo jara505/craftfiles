@@ -1,7 +1,6 @@
 import inquirer from 'inquirer';
 import fs from 'fs-extra';
-import path from 'path';
-import { detectProjectType, detectExistingQualityTool } from './detectors.js';
+import { detectProjectType, detectExistingQualityTool, isTypeScriptProject } from './detectors.js';
 import {
   generateBiome, getBiomeContent,
   generatePrettier, getPrettierContent,
@@ -9,22 +8,6 @@ import {
   generateEnv, getEnvContent,
   generateAgents, getAgentsContent
 } from './generators/index.js';
-
-function isTypeScriptProject() {
-  const packageJsonPath = path.join(process.cwd(), 'package.json');
-  if (!fs.existsSync(packageJsonPath)) {
-    return false;
-  }
-  try {
-    const packageJson = fs.readJsonSync(packageJsonPath);
-    const deps = packageJson.dependencies || {};
-    const devDeps = packageJson.devDependencies || {};
-    return 'typescript' in deps || 'typescript' in devDeps;
-  } catch (error) {
-    console.error('Error reading package.json:', error.message);
-    return false;
-  }
-}
 
 const validProfiles = ['backend', 'frontend'];
 

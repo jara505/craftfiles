@@ -1,6 +1,22 @@
 import fs from 'fs';
 import path from 'path';
 
+function isTypeScriptProject() {
+  const packageJsonPath = path.join(process.cwd(), 'package.json');
+  if (!fs.existsSync(packageJsonPath)) {
+    return false;
+  }
+  try {
+    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
+    const deps = packageJson.dependencies || {};
+    const devDeps = packageJson.devDependencies || {};
+    return 'typescript' in deps || 'typescript' in devDeps;
+  } catch (error) {
+    console.error('Error reading package.json:', error.message);
+    return false;
+  }
+}
+
 function detectProjectType() {
   const cwd = process.cwd();
 
@@ -34,4 +50,4 @@ function detectExistingQualityTool() {
   return null;
 }
 
-export { detectProjectType, detectExistingQualityTool };
+export { detectProjectType, detectExistingQualityTool, isTypeScriptProject };
