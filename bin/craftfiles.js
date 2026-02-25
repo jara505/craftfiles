@@ -18,9 +18,17 @@ program
   .option('--creator', 'Show creator info');
 
 program
-  .command('init [profile]')
-  .description('Initialize project with config files (profile: backend, frontend)')
-  .action((profile) => initCommand(profile));
+  .command('init')
+  .description('Initialize project with config files')
+  .option('--env <profile>', 'Set .env profile (backend, frontend)')
+  .allowExcessArguments(false)
+  .configureOutput({
+    outputError: () => {
+      console.error('❌ Unknown arguments. Run "craftfiles init --help" for more information.');
+      process.exit(1);
+    }
+  })
+  .action((options) => initCommand(options));
 
 program
   .command('clean')
