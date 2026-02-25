@@ -1,7 +1,6 @@
 import fs from 'fs-extra';
 
-async function generatePrettier() {
-  const prettierConfig = {
+const prettierConfig = {
     "semi": false,
     "trailingComma": "es5",
     "singleQuote": true,
@@ -13,10 +12,15 @@ async function generatePrettier() {
     "endOfLine": "lf",
     "quoteProps": "as-needed",
     "jsxSingleQuote": true
-  };
+};
 
+function getPrettierContent() {
+  return { filename: '.prettierrc', content: JSON.stringify(prettierConfig, null, 2) + '\n' };
+}
+
+async function generatePrettier() {
   await fs.writeJson('.prettierrc', prettierConfig, { spaces: 2 });
   console.log('✅ .prettierrc generated with best practices for JS/TS!');
 }
 
-export { generatePrettier };
+export { generatePrettier, getPrettierContent };

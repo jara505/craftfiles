@@ -1,7 +1,6 @@
 import fs from 'fs-extra';
 
-async function generateAgents() {
-  const agentsContent = `# AGENTS.md - Instructions for AI Tools
+const agentsContent = `# AGENTS.md - Instructions for AI Tools
 
 This document outlines guidelines for AI tools interacting with this project. Always prioritize user consent and best practices.
 
@@ -61,8 +60,13 @@ This section outlines good programming practices and principles to follow as bes
 Happy coding! 🤖
 `;
 
+function getAgentsContent() {
+  return { filename: 'AGENTS.md', content: agentsContent };
+}
+
+async function generateAgents() {
   await fs.writeFile('AGENTS.md', agentsContent);
   console.log('🤖 AGENTS.md generated with AI guidelines!');
 }
 
-export { generateAgents };
+export { generateAgents, getAgentsContent };
