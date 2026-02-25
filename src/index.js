@@ -193,6 +193,24 @@ async function initCommand(profile) {
     await file.generate();
   }
 
+  // Persist metadata for clean and future upgrades
+  const manifestPath = '.craftfiles.json';
+  const existingManifest = fs.existsSync(manifestPath)
+    ? fs.readJsonSync(manifestPath, { throws: false }) || {}
+    : {};
+
+  const writtenFilenames = filesToWrite.map(f => f.filename);
+  const allTracked = [...new Set([...(existingManifest.files || []), ...writtenFilenames])];
+
+  const manifest = {
+    version: 1,
+    profile: selectedProfile,
+    files: allTracked,
+    generatedAt: new Date().toISOString()
+  };
+
+  await fs.writeJson(manifestPath, manifest, { spaces: 2 });
+
   console.log('Done! Files generated. 🎉');
 }
 
