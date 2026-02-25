@@ -2,6 +2,7 @@ import inquirer from 'inquirer';
 import fs from 'fs-extra';
 import { detectProjectType, detectExistingQualityTool, isTypeScriptProject } from './detectors.js';
 import { VALID_PROFILES } from './constants.js';
+import { updateManifest } from './manifest.js';
 import {
   generateBiome, getBiomeContent,
   generatePrettier, getPrettierContent,
@@ -213,23 +214,7 @@ async function initCommand(options = {}) {
     await file.generate();
   }
 
-  // Persist metadata for clean and future upgrades
-  const manifestPath = '.craftfiles.json';
-  const existingManifest = fs.existsSync(manifestPath)
-    ? fs.readJsonSync(manifestPath, { throws: false }) || {}
-    : {};
-
-  const writtenFilenames = filesToWrite.map(f => f.filename);
-  const allTracked = [...new Set([...(existingManifest.files || []), ...writtenFilenames])];
-
-  const manifest = {
-    version: 1,
-    profile: selectedProfile,
-    files: allTracked,
-    generatedAt: new Date().toISOString()
-  };
-
-  await fs.writeJson(manifestPath, manifest, { spaces: 2 });
+  await updateManifest(filesToWrite, selectedProfile);
 
   console.log('Done! Files generated. 🎉');
 }
