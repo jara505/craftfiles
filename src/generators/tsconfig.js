@@ -1,36 +1,14 @@
 import fs from 'fs-extra';
-
-function buildTsconfig(enableAlias = true) {
-  const tsconfig = {
-    "compilerOptions": {
-      "target": "ES2020",
-      "module": "ESNext",
-      "strict": true,
-      "esModuleInterop": true,
-      "skipLibCheck": true,
-      "outDir": "dist",
-      "baseUrl": "."
-    },
-    "include": ["src/**/*"],
-    "exclude": ["node_modules", "dist"]
-  };
-
-  if (enableAlias) {
-    tsconfig.compilerOptions.paths = {
-      "@/*": ["src/*"]
-    };
-  }
-
-  return tsconfig;
-}
+import { readTemplate } from './template-reader.js';
 
 function getTsconfigContent(enableAlias = true) {
-  return { filename: 'tsconfig.json', content: JSON.stringify(buildTsconfig(enableAlias), null, 2) + '\n' };
+  const templateName = enableAlias ? 'tsconfig-alias.json' : 'tsconfig.json';
+  return { filename: 'tsconfig.json', content: readTemplate(templateName) };
 }
 
 async function generateTsconfig(enableAlias = true) {
-  await fs.writeJson('tsconfig.json', buildTsconfig(enableAlias), { spaces: 2 });
-  console.log('📄 tsconfig.json generated with alias support!');
+  await fs.writeFile('tsconfig.json', getTsconfigContent(enableAlias).content);
+  console.log('📄 tsconfig.json generated with best practices!');
 }
 
 export { generateTsconfig, getTsconfigContent };
