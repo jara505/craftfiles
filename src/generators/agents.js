@@ -48,13 +48,20 @@ Before manipulating Git (e.g., committing, pushing, creating branches), the AI m
 ## 3. Coding Standards
 This section outlines good programming practices and principles to follow as best practices in development.
 
-- Use TypeScript strict mode.
+- Use strict mode if available in your language (e.g., TypeScript or JavaScript).
 - Prefer functional programming over classes where possible.
 - Follow SOLID principles.
-- Use Biome for linting and formatting.
+- Use the configured code quality tool (Prettier, Biome, or others) for linting and formatting.
 - Always add comments to complex logic.
 - Use descriptive variable names.
 - Avoid global state.
+- Keep functions and modules small and focused; single responsibility principle.
+- Handle errors explicitly; avoid silent failures.
+- Maintain consistent indentation and naming conventions.
+- Avoid hardcoding values; use configuration or constants.
+- Write tests for critical logic and edge cases.
+- Review code for readability and maintainability before committing.
+- Ensure dependencies are necessary and up-to-date.
 - Test your changes before committing.
 
 Happy coding! 🤖
