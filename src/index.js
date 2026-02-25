@@ -20,8 +20,15 @@ function isTypeScriptProject() {
   }
 }
 
-async function initCommand() {
+const validProfiles = ['backend'];
+
+async function initCommand(profile) {
   console.log('Welcome to CraftFiles! 🔨');
+
+  if (profile && !validProfiles.includes(profile)) {
+    console.log(`Unknown profile: "${profile}". Valid profiles: ${validProfiles.join(', ')}`);
+    return;
+  }
 
   const projectType = detectProjectType();
   const isTs = isTypeScriptProject();
@@ -93,6 +100,17 @@ async function initCommand() {
       default: true
     });
 
+    if (!profile) {
+      questions.push({
+        type: 'list',
+        name: 'profile',
+        message: 'What type of project is this?',
+        choices: ['backend'],
+        default: 'backend',
+        when: (answers) => answers.env
+      });
+    }
+
     questions.push({
       type: 'confirm',
       name: 'agents',
@@ -121,7 +139,8 @@ async function initCommand() {
   }
 
   if (answers.env) {
-    await generateEnv();
+    const selectedProfile = profile || answers.profile || 'backend';
+    await generateEnv(selectedProfile);
   }
 
   if (answers.agents) {
