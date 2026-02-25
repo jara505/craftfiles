@@ -3,13 +3,7 @@ import { detectProjectType, detectExistingQualityTool, isTypeScriptProject } fro
 import { VALID_PROFILES } from './constants.js';
 import { updateManifest } from './manifest.js';
 import { classifyFiles } from './file-comparator.js';
-import {
-  generateBiome, getBiomeContent,
-  generatePrettier, getPrettierContent,
-  generateTsconfig, getTsconfigContent,
-  generateEnv, getEnvContent,
-  generateAgents, getAgentsContent
-} from './generators/index.js';
+import { resolveFiles } from './generators/registry.js';
 
 async function initCommand(options = {}) {
   console.log('Welcome to CraftFiles! 🔨');
@@ -127,26 +121,7 @@ async function initCommand(options = {}) {
 
   const selectedProfile = profile || answers.profile || 'backend';
 
-  // Build the list of intended files with their generators
-  const intendedFiles = [];
-
-  if (answers.linter === 'Biome') {
-    intendedFiles.push({ ...getBiomeContent(), generate: () => generateBiome() });
-  } else if (answers.linter === 'Prettier') {
-    intendedFiles.push({ ...getPrettierContent(), generate: () => generatePrettier() });
-  }
-
-  if (answers.tsconfig) {
-    intendedFiles.push({ ...getTsconfigContent(answers.enableAlias), generate: () => generateTsconfig(answers.enableAlias) });
-  }
-
-  if (answers.env) {
-    intendedFiles.push({ ...getEnvContent(selectedProfile), generate: () => generateEnv(selectedProfile) });
-  }
-
-  if (answers.agents) {
-    intendedFiles.push({ ...getAgentsContent(), generate: () => generateAgents() });
-  }
+  const intendedFiles = resolveFiles(answers, selectedProfile);
 
   if (intendedFiles.length === 0) {
     console.log('No files selected for generation.');
