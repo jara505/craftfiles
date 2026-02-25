@@ -1,18 +1,9 @@
 import fs from 'fs-extra';
-
-const envProfiles = {
-  backend: `NODE_ENV=development
-PORT=3000
-DATABASE_URL=
-JWT_SECRET=
-`,
-  frontend: `API_URL=
-APP_ENV=development
-`,
-};
+import { readTemplate } from './template-reader.js';
 
 function getEnvContent(profile) {
-  return { filename: '.env', content: envProfiles[profile] || envProfiles.backend };
+  const templateName = `.env.${profile || 'backend'}`;
+  return { filename: '.env', content: readTemplate(templateName) };
 }
 
 async function generateEnv(profile) {
