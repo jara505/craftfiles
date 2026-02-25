@@ -20,7 +20,7 @@ function isTypeScriptProject() {
   }
 }
 
-const validProfiles = ['backend'];
+const validProfiles = ['backend', 'frontend'];
 
 async function initCommand(profile) {
   console.log('Welcome to CraftFiles! 🔨');
@@ -105,7 +105,7 @@ async function initCommand(profile) {
         type: 'list',
         name: 'profile',
         message: 'What type of project is this?',
-        choices: ['backend'],
+        choices: ['backend', 'frontend'],
         default: 'backend',
         when: (answers) => answers.env
       });
