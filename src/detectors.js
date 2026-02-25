@@ -16,4 +16,22 @@ function detectProjectType() {
   return 'universal';
 }
 
-export { detectProjectType };
+function detectExistingQualityTool() {
+  const cwd = process.cwd();
+
+  const biomeFiles = ['biome.json', 'biome.jsonc'];
+  const prettierFiles = [
+    '.prettierrc', '.prettierrc.json', '.prettierrc.yml', '.prettierrc.yaml',
+    '.prettierrc.js', '.prettierrc.cjs', '.prettierrc.mjs',
+    'prettier.config.js', 'prettier.config.cjs', 'prettier.config.mjs'
+  ];
+
+  const hasBiome = biomeFiles.some(f => fs.existsSync(path.join(cwd, f)));
+  const hasPrettier = prettierFiles.some(f => fs.existsSync(path.join(cwd, f)));
+
+  if (hasBiome) return 'Biome';
+  if (hasPrettier) return 'Prettier';
+  return null;
+}
+
+export { detectProjectType, detectExistingQualityTool };

@@ -1,7 +1,7 @@
 import inquirer from 'inquirer';
 import fs from 'fs-extra';
 import path from 'path';
-import { detectProjectType } from './detectors.js';
+import { detectProjectType, detectExistingQualityTool } from './detectors.js';
 import {
   generateBiome, getBiomeContent,
   generatePrettier, getPrettierContent,
@@ -42,35 +42,59 @@ async function initCommand(profile) {
   let answers = { linter: 'Biome', env: true, agents: true, tsconfig: false, enableAlias: false };
 
   if (process.stdout.isTTY) {
-    let questions = [];
-
+    // Ask linter question first to detect conflicts immediately
     if (projectType === 'js/ts') {
-      questions.push({
+      const linterAnswer = await inquirer.prompt({
         type: 'list',
         name: 'linter',
         message: 'Choose your code quality tool (Biome: linter + formatter, Prettier: formatter only):',
         choices: ['Biome', 'Prettier', 'None'],
         default: 'Biome'
       });
+
+      answers.linter = linterAnswer.linter;
+
+      // Detect conflict between quality tools right after selection
+      if (answers.linter !== 'None') {
+        const existingTool = detectExistingQualityTool();
+
+        if (existingTool && existingTool !== answers.linter) {
+          console.log(`\n⚠️  Detected existing quality tool: ${existingTool}`);
+
+          const { replace } = await inquirer.prompt({
+            type: 'confirm',
+            name: 'replace',
+            message: `Do you want to replace it with ${answers.linter}?`,
+            default: false
+          });
+
+          if (!replace) {
+            answers.linter = 'None';
+          }
+        }
+      }
     }
 
+    // Continue with remaining questions
+    const remainingQuestions = [];
+
     if (isTs) {
-      questions.push({
+      remainingQuestions.push({
         type: 'confirm',
         name: 'tsconfig',
         message: 'Generate a tsconfig.json file with best practices?',
         default: true
       });
-      questions.push({
+      remainingQuestions.push({
         type: 'confirm',
         name: 'enableAlias',
         message: 'Enable path aliases (e.g., @/* for src/*)?',
         default: true,
-        when: (answers) => answers.tsconfig
+        when: (a) => a.tsconfig
       });
     }
 
-    questions.push({
+    remainingQuestions.push({
       type: 'confirm',
       name: 'env',
       message: 'Create .env file with basic environment variables?',
@@ -78,29 +102,41 @@ async function initCommand(profile) {
     });
 
     if (!profile) {
-      questions.push({
+      remainingQuestions.push({
         type: 'list',
         name: 'profile',
         message: 'What type of project is this?',
         choices: ['backend', 'frontend'],
         default: 'backend',
-        when: (answers) => answers.env
+        when: (a) => a.env
       });
     }
 
-    questions.push({
+    remainingQuestions.push({
       type: 'confirm',
       name: 'agents',
       message: 'Create AGENTS.md with instructions for AI tools?',
       default: true
     });
 
-    answers = await inquirer.prompt(questions);
+    const remainingAnswers = await inquirer.prompt(remainingQuestions);
+    answers = { ...answers, ...remainingAnswers };
   } else {
     console.log('Non-interactive mode: Using defaults.');
     if (isTs) {
       answers.tsconfig = true;
       answers.enableAlias = true;
+    }
+
+    // Detect conflict in non-interactive mode
+    if (answers.linter !== 'None') {
+      const existingTool = detectExistingQualityTool();
+
+      if (existingTool && existingTool !== answers.linter) {
+        console.log(`⚠️  Detected existing quality tool: ${existingTool}`);
+        console.log(`Skipping ${answers.linter} generation to avoid conflict.`);
+        answers.linter = 'None';
+      }
     }
   }
 
