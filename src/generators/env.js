@@ -11,11 +11,13 @@ APP_ENV=development
 `,
 };
 
-async function generateEnv(profile) {
-  const envContent = envProfiles[profile] || envProfiles.backend;
+function getEnvContent(profile) {
+  return { filename: '.env', content: envProfiles[profile] || envProfiles.backend };
+}
 
-  await fs.writeFile('.env', envContent);
+async function generateEnv(profile) {
+  await fs.writeFile('.env', getEnvContent(profile).content);
   console.log('🔐 .env generated with basic variables!');
 }
 
-export { generateEnv };
+export { generateEnv, getEnvContent };

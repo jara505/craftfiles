@@ -2,7 +2,13 @@ import inquirer from 'inquirer';
 import fs from 'fs-extra';
 import path from 'path';
 import { detectProjectType } from './detectors.js';
-import { generateBiome, generatePrettier, generateTsconfig, generateEnv, generateAgents } from './generators/index.js';
+import {
+  generateBiome, getBiomeContent,
+  generatePrettier, getPrettierContent,
+  generateTsconfig, getTsconfigContent,
+  generateEnv, getEnvContent,
+  generateAgents, getAgentsContent
+} from './generators/index.js';
 
 function isTypeScriptProject() {
   const packageJsonPath = path.join(process.cwd(), 'package.json');
@@ -32,35 +38,6 @@ async function initCommand(profile) {
 
   const projectType = detectProjectType();
   const isTs = isTypeScriptProject();
-
-  // Check for existing files that this tool manages
-  const existingFiles = [];
-  if (fs.existsSync('biome.json')) existingFiles.push('biome.json');
-  if (fs.existsSync('.prettierrc')) existingFiles.push('.prettierrc');
-  if (fs.existsSync('.env')) existingFiles.push('.env');
-  if (fs.existsSync('AGENTS.md')) existingFiles.push('AGENTS.md');
-  if (isTs && fs.existsSync('tsconfig.json')) existingFiles.push('tsconfig.json');
-
-
-  let overwrite = false;
-  if (existingFiles.length > 0) {
-    if (process.stdout.isTTY) {
-      const answer = await inquirer.prompt({
-        type: 'confirm',
-        name: 'overwrite',
-        message: `Some config files already exist: ${existingFiles.join(', ')}. Overwrite them?`,
-        default: false
-      });
-      overwrite = answer.overwrite;
-    } else {
-      console.log(`Warning: Files already exist: ${existingFiles.join(', ')}. Skipping in non-interactive mode.`);
-      overwrite = false;
-    }
-    if (!overwrite) {
-      console.log('Operation cancelled or skipped.');
-      return;
-    }
-  }
 
   let answers = { linter: 'Biome', env: true, agents: true, tsconfig: false, enableAlias: false };
 
@@ -127,24 +104,93 @@ async function initCommand(profile) {
     }
   }
 
-  // Generate files based on answers
+  const selectedProfile = profile || answers.profile || 'backend';
+
+  // Build the list of intended files with their generators
+  const intendedFiles = [];
+
   if (answers.linter === 'Biome') {
-    await generateBiome();
+    intendedFiles.push({ ...getBiomeContent(), generate: () => generateBiome() });
   } else if (answers.linter === 'Prettier') {
-    await generatePrettier();
+    intendedFiles.push({ ...getPrettierContent(), generate: () => generatePrettier() });
   }
 
   if (answers.tsconfig) {
-    await generateTsconfig(answers.enableAlias);
+    intendedFiles.push({ ...getTsconfigContent(answers.enableAlias), generate: () => generateTsconfig(answers.enableAlias) });
   }
 
   if (answers.env) {
-    const selectedProfile = profile || answers.profile || 'backend';
-    await generateEnv(selectedProfile);
+    intendedFiles.push({ ...getEnvContent(selectedProfile), generate: () => generateEnv(selectedProfile) });
   }
 
   if (answers.agents) {
-    await generateAgents();
+    intendedFiles.push({ ...getAgentsContent(), generate: () => generateAgents() });
+  }
+
+  if (intendedFiles.length === 0) {
+    console.log('No files selected for generation.');
+    return;
+  }
+
+  // Compare intended files against what's on disk
+  const toCreate = [];
+  const differing = [];
+  const upToDate = [];
+
+  for (const file of intendedFiles) {
+    if (fs.existsSync(file.filename)) {
+      const existing = fs.readFileSync(file.filename, 'utf-8');
+      if (existing === file.content) {
+        upToDate.push(file);
+      } else {
+        differing.push(file);
+      }
+    } else {
+      toCreate.push(file);
+    }
+  }
+
+  // All files already match
+  if (differing.length === 0 && toCreate.length === 0) {
+    console.log('✅ All files are already up to date!');
+    return;
+  }
+
+  // Handle differing files
+  let filesToWrite = [...toCreate];
+
+  if (differing.length > 0) {
+    console.log('\n⚠️  The following files already exist and differ:');
+    for (const f of differing) {
+      console.log(`  - ${f.filename}`);
+    }
+
+    let overwrite = false;
+    if (process.stdout.isTTY) {
+      const answer = await inquirer.prompt({
+        type: 'confirm',
+        name: 'overwrite',
+        message: 'Do you want to overwrite them?',
+        default: false
+      });
+      overwrite = answer.overwrite;
+    } else {
+      console.log('Skipping overwrite in non-interactive mode.');
+    }
+
+    if (overwrite) {
+      filesToWrite = [...filesToWrite, ...differing];
+    }
+  }
+
+  if (filesToWrite.length === 0) {
+    console.log('No files were written.');
+    return;
+  }
+
+  // Generate only the files that need writing
+  for (const file of filesToWrite) {
+    await file.generate();
   }
 
   console.log('Done! Files generated. 🎉');

@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
 
-async function generateTsconfig(enableAlias = true) {
+function buildTsconfig(enableAlias = true) {
   const tsconfig = {
     "compilerOptions": {
       "target": "ES2020",
@@ -21,8 +21,16 @@ async function generateTsconfig(enableAlias = true) {
     };
   }
 
-  await fs.writeJson('tsconfig.json', tsconfig, { spaces: 2 });
+  return tsconfig;
+}
+
+function getTsconfigContent(enableAlias = true) {
+  return { filename: 'tsconfig.json', content: JSON.stringify(buildTsconfig(enableAlias), null, 2) + '\n' };
+}
+
+async function generateTsconfig(enableAlias = true) {
+  await fs.writeJson('tsconfig.json', buildTsconfig(enableAlias), { spaces: 2 });
   console.log('📄 tsconfig.json generated with alias support!');
 }
 
-export { generateTsconfig };
+export { generateTsconfig, getTsconfigContent };
