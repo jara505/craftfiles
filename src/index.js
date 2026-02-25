@@ -28,8 +28,10 @@ function isTypeScriptProject() {
 
 const validProfiles = ['backend', 'frontend'];
 
-async function initCommand(profile) {
+async function initCommand(options = {}) {
   console.log('Welcome to CraftFiles! 🔨');
+
+  const profile = options.env || null;
 
   if (profile && !validProfiles.includes(profile)) {
     console.log(`Unknown profile: "${profile}". Valid profiles: ${validProfiles.join(', ')}`);
