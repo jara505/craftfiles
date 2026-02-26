@@ -1,4 +1,3 @@
-import fs from 'fs-extra';
 import { readTemplate } from './template-reader.js';
 
 function getTsconfigContent(enableAlias = true) {
@@ -6,9 +5,4 @@ function getTsconfigContent(enableAlias = true) {
   return { filename: 'tsconfig.json', content: readTemplate(templateName) };
 }
 
-async function generateTsconfig(enableAlias = true) {
-  await fs.writeFile('tsconfig.json', getTsconfigContent(enableAlias).content);
-  console.log('📄 tsconfig.json generated with best practices!');
-}
-
-export { generateTsconfig, getTsconfigContent };
+export { getTsconfigContent };

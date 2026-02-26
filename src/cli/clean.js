@@ -1,7 +1,6 @@
 import fs from 'fs-extra';
 import inquirer from 'inquirer';
-
-const MANIFEST_PATH = '.craftfiles.json';
+import { MANIFEST_PATH } from '../core/constants.js';
 
 async function cleanCommand() {
   console.log('🧹 CraftFiles Clean Mode');

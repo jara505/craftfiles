@@ -1,40 +1,24 @@
-import { generateBiome, getBiomeContent } from './biome.js';
-import { generatePrettier, getPrettierContent } from './prettier.js';
-import { generateTsconfig, getTsconfigContent } from './tsconfig.js';
-import { generateEnv, getEnvContent } from './env.js';
-import { generateAgents, getAgentsContent } from './agents.js';
+import fs from 'fs-extra';
+import { getBiomeContent } from './biome.js';
+import { getPrettierContent } from './prettier.js';
+import { getTsconfigContent } from './tsconfig.js';
+import { getEnvContent } from './env.js';
+import { getAgentsContent } from './agents.js';
+
+const LOG_MESSAGES = {
+  'biome.json': '⚙️ biome.json generated with best practices for JS/TS!',
+  '.prettierrc': '✅ .prettierrc generated with best practices for JS/TS!',
+  'tsconfig.json': '📄 tsconfig.json generated with best practices!',
+  '.env': '🔐 .env generated with basic variables!',
+  'AGENTS.md': '🤖 AGENTS.md generated with AI guidelines!'
+};
 
 const registry = [
-  {
-    name: 'Biome',
-    group: 'linter',
-    getContent: () => getBiomeContent(),
-    generate: () => generateBiome()
-  },
-  {
-    name: 'Prettier',
-    group: 'linter',
-    getContent: () => getPrettierContent(),
-    generate: () => generatePrettier()
-  },
-  {
-    name: 'tsconfig',
-    group: 'tsconfig',
-    getContent: (opts) => getTsconfigContent(opts.enableAlias),
-    generate: (opts) => generateTsconfig(opts.enableAlias)
-  },
-  {
-    name: 'env',
-    group: 'env',
-    getContent: (opts) => getEnvContent(opts.profile),
-    generate: (opts) => generateEnv(opts.profile)
-  },
-  {
-    name: 'agents',
-    group: 'agents',
-    getContent: () => getAgentsContent(),
-    generate: () => generateAgents()
-  }
+  { name: 'Biome', group: 'linter', getContent: () => getBiomeContent() },
+  { name: 'Prettier', group: 'linter', getContent: () => getPrettierContent() },
+  { name: 'tsconfig', group: 'tsconfig', getContent: (opts) => getTsconfigContent(opts.enableAlias) },
+  { name: 'env', group: 'env', getContent: (opts) => getEnvContent(opts.profile) },
+  { name: 'agents', group: 'agents', getContent: () => getAgentsContent() }
 ];
 
 function resolveFiles(answers, profile) {
@@ -49,10 +33,16 @@ function resolveFiles(answers, profile) {
     if (entry.group === 'agents' && !answers.agents) continue;
 
     const content = entry.getContent(opts);
-    selected.push({ ...content, generate: () => entry.generate(opts) });
+    selected.push({
+      ...content,
+      generate: async () => {
+        await fs.writeFile(content.filename, content.content);
+        console.log(LOG_MESSAGES[content.filename]);
+      }
+    });
   }
 
   return selected;
 }
 
-export { registry, resolveFiles };
+export { resolveFiles };
