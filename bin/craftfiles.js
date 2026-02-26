@@ -4,7 +4,7 @@ import { program } from 'commander';
 import { readFileSync } from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
-import { initCommand } from '../src/index.js';
+import { initCommand } from '../src/core/index.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -34,7 +34,7 @@ program
   .command('clean')
   .description('Remove generated config files')
   .action(async () => {
-    const { cleanCommand } = await import('../src/clean.js');
+    const { cleanCommand } = await import('../src/cli/clean.js');
     cleanCommand();
   });
 

@@ -1,8 +1,8 @@
 import { VALID_PROFILES } from './constants.js';
-import { collectAnswers, confirmOverwrite } from './prompts.js';
-import { resolveFiles } from './generators/registry.js';
-import { classifyFiles } from './file-comparator.js';
-import { updateManifest } from './manifest.js';
+import { collectAnswers, confirmOverwrite } from '../cli/prompts.js';
+import { resolveFiles } from '../generators/registry.js';
+import { classifyFiles } from '../utils/file-comparator.js';
+import { updateManifest } from '../utils/manifest.js';
 
 async function initCommand(options = {}) {
   console.log('Welcome to CraftFiles! 🔨');
