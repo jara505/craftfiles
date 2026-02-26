@@ -1,6 +1,8 @@
 # CraftFiles
 
-CraftFiles is a CLI tool designed to initialize and generate configuration files for JavaScript and TypeScript projects. It helps developers quickly set up linters, formatters, environment variables, and AI instructions for their projects.
+CraftFiles is not a project generator. It's a post-setup config injector for JavaScript and TypeScript projects.
+
+You already have your project. CraftFiles gives you opinionated, ready-to-use configuration files in a single command — no more copying from StackOverflow or running multiple CLIs.
 
 ## Installation
 
@@ -10,34 +12,35 @@ npm install -g @jara505/craftfiles
 
 ## Usage
 
-Run the following command to start the interactive setup:
-
 ```bash
-@jara505/craftfiles init
+craftfiles init
 ```
 
-This command detects if your project is JavaScript/TypeScript based and prompts you to choose which configuration files to generate, such as Biome (linter/formatter), Prettier (formatter), .env (environment variables), and AGENTS.md (instructions for AI tools).
+Detects your project type and prompts you to select which config files to generate.
 
 ### Commands
 
-- `@jara505/craftfiles init`: Initialize project with config files interactively.
-- `@jara505/craftfiles clean`: Remove generated config files.
-
-### Options
-
-- `--help`, `-h`: Display help.
-- `--version`, `-V`: Show version.
-- `--creator`: Display creator info.
+| Command | Description |
+|---|---|
+| `craftfiles init` | Generate config files interactively |
+| `craftfiles init --env <profile>` | Set .env profile (`backend` or `frontend`) |
+| `craftfiles clean` | Remove generated config files |
+| `craftfiles --creator` | Display creator info |
+| `craftfiles --version` | Show version |
 
 ### Example
 
 ```bash
-$ @jara505/craftfiles init
+$ craftfiles init
 Welcome to CraftFiles! 🔨
 ? Choose your code quality tool (Biome: linter + formatter in one, Prettier: formatter only): Biome
+? Generate a tsconfig.json file with best practices? Yes
+? Enable path aliases (e.g., @/* for src/*)? Yes
 ? Create .env file with basic environment variables? Yes
+? What type of project is this? backend
 ? Create AGENTS.md with instructions for AI tools? Yes
 ⚙️ biome.json generated with best practices for JS/TS!
+📄 tsconfig.json generated with best practices!
 🔐 .env generated with basic variables!
 🤖 AGENTS.md generated with AI guidelines!
 Done! Files generated. 🎉
@@ -45,16 +48,25 @@ Done! Files generated. 🎉
 
 ## Features
 
-- Automatically detects JavaScript/TypeScript projects
-- Generates Biome, Prettier, .env, and AGENTS.md files
-- Interactive prompts for easy customization
+- **Not a scaffolder** — works on existing projects, injects config only
+- **Opinionated defaults** — every generated file comes with production-ready settings
+- **Profile system** — `.env` adapts to backend or frontend contexts
+- **Conflict detection** — detects existing Biome/Prettier configs and warns before overwriting
+- **TypeScript aware** — detects TS projects and offers `tsconfig.json` with optional path aliases
+- **Manifest tracking** — tracks generated files in `.craftfiles.json` for clean removal via `craftfiles clean`
 
-## Copyright
+## Supported Config Files
 
-© 2025 Juan Ignacio Jara Caceres. All rights reserved.
-
-This project is proprietary software. You may not distribute, modify, or create derivative works without explicit written permission from the author. No contributions, pull requests, or issues are accepted.
+| File | Description |
+|---|---|
+| `biome.json` | Linter + formatter with best practices |
+| `.prettierrc` | Formatter configuration |
+| `tsconfig.json` | TypeScript compiler options (with optional aliases) |
+| `.env` | Environment variables by profile |
+| `AGENTS.md` | AI assistant operational guidelines |
 
 ## License
 
-This project is proprietary. All rights reserved. No contributions accepted.
+© 2025 Juan Ignacio Jara Caceres. All rights reserved.
+
+This project is proprietary software. You may not distribute, modify, or create derivative works without explicit written permission from the author.
