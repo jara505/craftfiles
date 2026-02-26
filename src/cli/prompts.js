@@ -1,5 +1,5 @@
 import inquirer from 'inquirer';
-import { detectProjectType, detectExistingQualityTool, isTypeScriptProject } from './detectors.js';
+import { detectProjectType, detectExistingQualityTool, isTypeScriptProject } from '../utils/detectors.js';
 
 async function collectAnswers(profile) {
   const projectType = detectProjectType();
