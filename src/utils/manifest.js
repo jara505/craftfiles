@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
 
-const MANIFEST_PATH = '.craftfiles.json';
+import { MANIFEST_PATH } from '../core/constants.js';
 
 function readManifest() {
   if (!fs.existsSync(MANIFEST_PATH)) return {};

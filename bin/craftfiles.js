@@ -5,6 +5,7 @@ import { readFileSync } from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import { initCommand } from '../src/core/index.js';
+import { cleanCommand } from '../src/cli/clean.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -15,7 +16,12 @@ program
   .name('craftfiles')
   .description('CLI to initialize and generate config files for JS/TS projects')
   .version(version)
-  .option('--creator', 'Show creator info');
+  .option('--creator', 'Show creator info')
+  .action((options) => {
+    if (options.creator) {
+      console.log('Created by Juan Ignacio Jara Caceres 🇳🇮');
+    }
+  });
 
 program
   .command('init')
@@ -33,14 +39,6 @@ program
 program
   .command('clean')
   .description('Remove generated config files')
-  .action(async () => {
-    const { cleanCommand } = await import('../src/cli/clean.js');
-    cleanCommand();
-  });
-
-if (process.argv.includes('--creator')) {
-  console.log('Created by Juan Ignacio Jara Caceres 🇳🇮');
-  process.exit(0);
-}
+  .action(() => cleanCommand());
 
 program.parse();
