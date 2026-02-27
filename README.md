@@ -38,10 +38,12 @@ Welcome to CraftFiles! 🔨
 ? Enable path aliases (e.g., @/* for src/*)? Yes
 ? Create .env file with basic environment variables? Yes
 ? What type of project is this? backend
+? Generate a .gitignore file for JS/TS projects? Yes
 ? Create AGENTS.md with instructions for AI tools? Yes
 ⚙️ biome.json generated with best practices for JS/TS!
 📄 tsconfig.json generated with best practices!
 🔐 .env generated with basic variables!
+🚫 .gitignore generated for JS/TS projects!
 🤖 AGENTS.md generated with AI guidelines!
 Done! Files generated. 🎉
 ```
@@ -63,6 +65,7 @@ Done! Files generated. 🎉
 | `.prettierrc` | Formatter configuration |
 | `tsconfig.json` | TypeScript compiler options (with optional aliases) |
 | `.env` | Environment variables by profile |
+| `.gitignore` | Ignore rules for JS/TS projects |
 | `AGENTS.md` | AI assistant operational guidelines |
 
 ## License
