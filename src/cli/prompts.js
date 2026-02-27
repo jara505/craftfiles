@@ -5,7 +5,7 @@ async function collectAnswers(profile) {
   const projectType = detectProjectType();
   const isTs = isTypeScriptProject();
 
-  let answers = { linter: 'Biome', env: true, agents: true, tsconfig: false, enableAlias: false };
+  let answers = { linter: 'Biome', env: true, agents: true, gitignore: true, tsconfig: false, enableAlias: false };
 
   if (process.stdout.isTTY) {
     answers = await collectInteractiveAnswers(projectType, isTs, profile);
@@ -32,7 +32,7 @@ async function collectAnswers(profile) {
 }
 
 async function collectInteractiveAnswers(projectType, isTs, profile) {
-  let answers = { linter: 'Biome', env: true, agents: true, tsconfig: false, enableAlias: false };
+  let answers = { linter: 'Biome', env: true, agents: true, gitignore: true, tsconfig: false, enableAlias: false };
 
   // Ask linter question first to detect conflicts immediately
   if (projectType === 'js/ts') {
@@ -103,6 +103,13 @@ async function collectInteractiveAnswers(projectType, isTs, profile) {
       when: (a) => a.env
     });
   }
+
+  remainingQuestions.push({
+    type: 'confirm',
+    name: 'gitignore',
+    message: 'Generate a .gitignore file for JS/TS projects?',
+    default: true
+  });
 
   remainingQuestions.push({
     type: 'confirm',

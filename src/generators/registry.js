@@ -4,13 +4,15 @@ import { getPrettierContent } from './prettier.js';
 import { getTsconfigContent } from './tsconfig.js';
 import { getEnvContent } from './env.js';
 import { getAgentsContent } from './agents.js';
+import { getGitignoreContent } from './gitignore.js';
 
 const LOG_MESSAGES = {
   'biome.json': '⚙️ biome.json generated with best practices for JS/TS!',
   '.prettierrc': '✅ .prettierrc generated with best practices for JS/TS!',
   'tsconfig.json': '📄 tsconfig.json generated with best practices!',
   '.env': '🔐 .env generated with basic variables!',
-  'AGENTS.md': '🤖 AGENTS.md generated with AI guidelines!'
+  'AGENTS.md': '🤖 AGENTS.md generated with AI guidelines!',
+  '.gitignore': '🚫 .gitignore generated for JS/TS projects!'
 };
 
 const registry = [
@@ -18,7 +20,8 @@ const registry = [
   { name: 'Prettier', group: 'linter', getContent: () => getPrettierContent() },
   { name: 'tsconfig', group: 'tsconfig', getContent: (opts) => getTsconfigContent(opts.enableAlias) },
   { name: 'env', group: 'env', getContent: (opts) => getEnvContent(opts.profile) },
-  { name: 'agents', group: 'agents', getContent: () => getAgentsContent() }
+  { name: 'agents', group: 'agents', getContent: () => getAgentsContent() },
+  { name: 'gitignore', group: 'gitignore', getContent: () => getGitignoreContent() }
 ];
 
 function resolveFiles(answers, profile) {
@@ -31,6 +34,7 @@ function resolveFiles(answers, profile) {
     if (entry.group === 'tsconfig' && !answers.tsconfig) continue;
     if (entry.group === 'env' && !answers.env) continue;
     if (entry.group === 'agents' && !answers.agents) continue;
+    if (entry.group === 'gitignore' && !answers.gitignore) continue;
 
     const content = entry.getContent(opts);
     selected.push({
