@@ -39,7 +39,7 @@ async function collectInteractiveAnswers(projectType, isTs, profile) {
     const linterAnswer = await inquirer.prompt({
       type: 'list',
       name: 'linter',
-      message: 'Choose your code quality tool (Biome: linter + formatter, Prettier: formatter only):',
+      message: 'Choose your code quality tool (Biome: linter + formatter, Prettier: formatter + ESLint for JS):',
       choices: ['Biome', 'Prettier', 'None'],
       default: 'Biome'
     });
