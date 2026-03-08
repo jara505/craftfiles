@@ -6,6 +6,7 @@ import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import { initCommand } from '../src/core/index.js';
 import { cleanCommand } from '../src/cli/clean.js';
+import { agentsCommand } from '../src/cli/agents.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -40,5 +41,10 @@ program
   .command('clean')
   .description('Remove generated config files')
   .action(() => cleanCommand());
+
+program
+  .command('agents')
+  .description('Generate AGENTS.md (language-agnostic, no manifest created)')
+  .action(() => agentsCommand());
 
 program.parse();
