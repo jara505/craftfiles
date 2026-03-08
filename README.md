@@ -24,6 +24,7 @@ Detects your project type and prompts you to select which config files to genera
 |---|---|
 | `craftfiles init` | Generate config files interactively |
 | `craftfiles init --env <profile>` | Set .env profile (`backend` or `frontend`) |
+| `craftfiles agents` | Generate AGENTS.md (language-agnostic, no manifest) |
 | `craftfiles clean` | Remove generated config files |
 | `craftfiles --creator` | Display creator info |
 | `craftfiles --version` | Show version |
