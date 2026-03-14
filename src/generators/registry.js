@@ -14,6 +14,7 @@ const LOG_MESSAGES = {
   'tsconfig.json': '📄 tsconfig.json generated with best practices!',
   '.env': '🔐 .env generated with basic variables!',
   'AGENTS.md': '🤖 AGENTS.md generated with AI guidelines!',
+  'skills/git-workflow.md': '📋 skills/git-workflow.md generated with git workflow guidelines!',
   '.gitignore': '🚫 .gitignore generated for JS/TS projects!'
 };
 
@@ -40,14 +41,21 @@ function resolveFiles(answers, profile) {
     if (entry.group === 'agents' && !answers.agents) continue;
     if (entry.group === 'gitignore' && !answers.gitignore) continue;
 
-    const content = entry.getContent(opts);
-    selected.push({
-      ...content,
-      generate: async () => {
-        await fs.writeFile(content.filename, content.content);
-        console.log(LOG_MESSAGES[content.filename]);
-      }
-    });
+    const result = entry.getContent(opts);
+    const contents = Array.isArray(result) ? result : [result];
+
+    for (const content of contents) {
+      selected.push({
+        ...content,
+        generate: async () => {
+          if (content.dir) {
+            await fs.ensureDir(content.dir);
+          }
+          await fs.writeFile(content.filename, content.content);
+          console.log(LOG_MESSAGES[content.filename]);
+        }
+      });
+    }
   }
 
   return selected;

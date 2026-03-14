@@ -44,7 +44,7 @@ program
 
 program
   .command('agents')
-  .description('Generate AGENTS.md (language-agnostic, no manifest created)')
+  .description('Generate AGENTS.md and skills/ (language-agnostic, no manifest created)')
   .action(() => agentsCommand());
 
 program.parse();
