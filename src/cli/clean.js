@@ -3,38 +3,47 @@ import inquirer from 'inquirer';
 import { MANIFEST_PATH } from '../core/constants.js';
 
 const AGENTS_FILE = 'AGENTS.md';
+const SKILLS_DIR = 'skills';
 
 async function cleanCommand() {
   console.log('🧹 CraftFiles Clean Mode');
 
-  // Always check for AGENTS.md (standalone mode)
+  // Always check for AGENTS.md and skills/ (standalone mode)
   const agentsExists = fs.existsSync(AGENTS_FILE);
+  const skillsExists = fs.existsSync(SKILLS_DIR);
   const manifestExists = fs.existsSync(MANIFEST_PATH);
 
   // Handle standalone AGENTS.md without manifest
-  if (!manifestExists && !agentsExists) {
-    console.log('No .craftfiles.json or AGENTS.md found. Nothing to clean.');
+  if (!manifestExists && !agentsExists && !skillsExists) {
+    console.log('No .craftfiles.json, AGENTS.md, or skills/ found. Nothing to clean.');
     return;
   }
 
-  if (!manifestExists && agentsExists) {
-    // Only AGENTS.md exists (standalone mode)
-    console.log(`Found: ${AGENTS_FILE}`);
+  if (!manifestExists && (agentsExists || skillsExists)) {
+    // Only AGENTS.md and/or skills/ exist (standalone mode)
+    const found = [agentsExists && AGENTS_FILE, skillsExists && `${SKILLS_DIR}/`].filter(Boolean);
+    console.log(`Found: ${found.join(', ')}`);
     
     let confirm = true;
     if (process.stdout.isTTY) {
       const answer = await inquirer.prompt({
         type: 'confirm',
         name: 'confirm',
-        message: 'Remove this file?',
+        message: 'Remove these files?',
         default: false
       });
       confirm = answer.confirm;
     }
 
     if (confirm) {
-      await fs.remove(AGENTS_FILE);
-      console.log(`🗑️ Removed ${AGENTS_FILE}`);
+      if (agentsExists) {
+        await fs.remove(AGENTS_FILE);
+        console.log(`🗑️ Removed ${AGENTS_FILE}`);
+      }
+      if (skillsExists) {
+        await fs.remove(SKILLS_DIR);
+        console.log(`🗑️ Removed ${SKILLS_DIR}/`);
+      }
       console.log('Clean completed! 🧽');
     } else {
       console.log('Clean cancelled.');
@@ -75,10 +84,16 @@ async function cleanCommand() {
       console.log(`🗑️ Removed ${file}`);
     }
     
-    // Also remove AGENTS.md if it exists (standalone mode)
-    if (agentsExists) {
+    // Remove AGENTS.md and skills/ only if not already handled by manifest
+    if (agentsExists && !existingFiles.includes(AGENTS_FILE)) {
       await fs.remove(AGENTS_FILE);
       console.log(`🗑️ Removed ${AGENTS_FILE}`);
+    }
+    if (skillsExists && !fs.existsSync(SKILLS_DIR)) {
+      // skills/ dir was already cleaned by manifest file removal
+    } else if (skillsExists) {
+      await fs.remove(SKILLS_DIR);
+      console.log(`🗑️ Removed ${SKILLS_DIR}/`);
     }
     
     await fs.remove(MANIFEST_PATH);
