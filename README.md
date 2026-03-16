@@ -24,7 +24,7 @@ Detects your project type and prompts you to select which config files to genera
 |---|---|
 | `craftfiles init` | Generate config files interactively |
 | `craftfiles init --env <profile>` | Set .env profile (`backend` or `frontend`) |
-| `craftfiles agents` | Generate AGENTS.md (language-agnostic, no manifest) |
+| `craftfiles agents` | Generate AGENTS.md and skills/ (language-agnostic, no manifest) |
 | `craftfiles clean` | Remove generated config files |
 | `craftfiles --creator` | Display creator info |
 | `craftfiles --version` | Show version |
@@ -46,6 +46,7 @@ Welcome to CraftFiles! 🔨
 🔐 .env generated with basic variables!
 🚫 .gitignore generated for JS/TS projects!
 🤖 AGENTS.md generated with AI guidelines!
+📋 skills/git-workflow.md generated with git workflow guidelines!
 Done! Files generated. 🎉
 ```
 
@@ -55,7 +56,9 @@ Done! Files generated. 🎉
 - **Opinionated defaults** — every generated file comes with production-ready settings
 - **Profile system** — `.env` adapts to backend or frontend contexts
 - **Conflict detection** — detects existing Biome/Prettier configs and warns before overwriting
+- **ESLint companion** — automatically generates `eslint.config.js` when Prettier is selected as linting companion
 - **TypeScript aware** — detects TS projects and offers `tsconfig.json` with optional path aliases
+- **Skills system** — generates `skills/git-workflow.md` alongside AGENTS.md for structured AI workflow guidelines
 - **Manifest tracking** — tracks generated files in `.craftfiles.json` for clean removal via `craftfiles clean`
 
 ## Supported Config Files
@@ -64,13 +67,15 @@ Done! Files generated. 🎉
 |---|---|
 | `biome.json` | Linter + formatter with best practices |
 | `.prettierrc` | Formatter configuration |
+| `eslint.config.js` | ESLint flat config (generated alongside Prettier) |
 | `tsconfig.json` | TypeScript compiler options (with optional aliases) |
 | `.env` | Environment variables by profile |
 | `.gitignore` | Ignore rules for JS/TS projects |
 | `AGENTS.md` | AI assistant operational guidelines |
+| `skills/git-workflow.md` | Git workflow guidelines for AI agents |
 
 ## License
 
-© 2025 Juan Ignacio Jara Caceres. All rights reserved.
+© 2025-2026 Juan Ignacio Jara Caceres. All rights reserved.
 
 This project is proprietary software. You may not distribute, modify, or create derivative works without explicit written permission from the author.
