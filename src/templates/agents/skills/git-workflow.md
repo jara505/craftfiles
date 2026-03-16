@@ -6,11 +6,17 @@ The AI must request explicit user authorization before any `git` command executi
 - **Allowed Prefixes:** `feat`, `fix`, `hotfix`, `refactor`, `chore`, `docs`, `test`, `perf`, `ci`, `build`.
 - **Constraint:** No uppercase, no spaces, no underscores.
 
-## 2. Commit Guidelines
+## 2. Commit Guidelines (Conventional Commits)
+- **Format:** `<type>: <imperative summary>` (50-70 chars).
+- **Allowed Types:** `feat`, `fix`, `hotfix`, `refactor`, `chore`, `docs`, `test`, `perf`, `ci`, `build`.
 - **Language:** English only.
-- **Voice:** Use active, imperative mood (e.g., "Add validation" instead of "Added validation").
+- **Voice:** Use active, imperative mood (e.g., `feat: add validation` instead of `feat: added validation`).
 - **Atomicity:** Each commit must represent a single logical change. Do not mix refactors with new features.
-- **Structure:** `Subject (50-70 chars): Brief summary`. Use the body for "why" and "breaking changes" if necessary.
+- **Body:** Use for "why" and "breaking changes" if necessary.
+- **Examples:**
+  - `feat: add JWT authentication middleware`
+  - `fix: resolve null reference in user service`
+  - `docs: update API usage examples`
 
 ## 3. Pull Request Structure
 PRs must be submitted in Markdown with:
