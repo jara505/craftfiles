@@ -29,27 +29,12 @@ Before proposing or executing any file manipulation, the AI must:
 
 ---
 
-## 3. Git Operations & Workflow
-The AI must request explicit user authorization before any `git` command execution.
+## 3. Git Command Policy
+The AI must request explicit user authorization before executing any `git` command.
 
-### Branching Strategy
-- **Format:** `<prefix>/<kebab-case-description>` (e.g., `feat/auth-middleware`).
-- **Allowed Prefixes:** `feat`, `fix`, `hotfix`, `refactor`, `chore`, `docs`, `test`, `perf`, `ci`, `build`.
-- **Constraint:** No uppercase, no spaces, no underscores.
+All Git branching, commit, and pull request rules are defined in:
 
-### Commit Guidelines
-- **Language:** English only.
-- **Voice:** Use active, imperative mood (e.g., "Add validation" instead of "Added validation").
-- **Atomicity:** Each commit must represent a single logical change. Do not mix refactors with new features.
-- **Structure:** `Subject (50-70 chars): Brief summary`. Use the body for "why" and "breaking changes" if necessary.
-
-### Pull Request Structure
-PRs must be submitted in Markdown with:
-- **Overview:** High-level summary of the goal.
-- **Key Changes:** Bullet points of technical implementations.
-- **Impact:** List of modules affected.
-- **Size:** Keep PRs focused; avoid "mega-PRs."
-- **Format**: The pr must be submitted in markdown format
+`skills/git-workflow.md`
 
 ---
 
