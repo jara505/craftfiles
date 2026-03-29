@@ -18,6 +18,12 @@ To maximize efficiency and token usage, the AI must follow these rules:
 - **Technical Accuracy:** Use precise terminology. If a solution has trade-offs, state them clearly.
 - **Visual Artifacts:** Use Mermaid.js diagrams for complex logic flows and Markdown tables for dependency or performance comparisons.
 - **Uncertainty Principle:** If the impact of a change is unclear due to missing context, the AI must declare it explicitly before proposing code.
+- **Token Discipline:**
+    - Default detail level: LOW (direct answer only). Escalate only if the user requests it.
+    - Max 5 bullets per response unless the task demands more.
+    - Prefer lists and tables over prose. No long paragraphs.
+    - Do not restate the input, repeat previous answers, or add unnecessary context.
+    - Summarize internally before answering; compress similar ideas into one.
 
 ---
 
