@@ -101,7 +101,7 @@ update docs                ← no conventional commit format
 
 ## 3. Pull Request Structure
 
-PRs must be submitted in Markdown with:
+PRs must be submitted in Markdown with the following sections:
 
 ### Overview
 High-level summary of the goal. If it's a bugfix, briefly describe the root cause.
@@ -113,24 +113,14 @@ High-level summary of the goal. If it's a bugfix, briefly describe the root caus
 | `path/to/file` | What changed and why |
 
 ### Impact
-List of modules affected and how their behavior changes.
-
-### Breaking Changes (if any)
-Describe what existing behavior changes and how it affects consumers.
+List of modules affected and how their behavior changes. If any change breaks existing behavior, describe what changes and how it affects consumers.
 
 ### Test Plan
 - [ ] Tests pass locally
 - [ ] Manually tested the affected functionality
 - [ ] Docs updated if behavior changed
 
-### Contributor Checklist
-- [ ] Conventional commit format used
-- [ ] Branch follows `type/description` naming
-- [ ] No debug logs remain
-- [ ] No secrets, credentials, or `.env` files committed
-
 **Size:** Keep PRs focused; avoid "mega-PRs."
-
 ---
 
 ## 4. Forbidden Git Operations
