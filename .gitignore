@@ -3,5 +3,5 @@ node_modules/
 .DS_Store
 .env
 .craftfiles.json
-skills
-AGENTS.md
+/skills
+/AGENTS.md
