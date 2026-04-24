@@ -100,43 +100,122 @@ update docs                ← no conventional commit format
 ## 3. Pull Request Structure
 
 ### Overview
-- Goal
-- Root cause (if bug)
-- Approach taken
+
+**Goal**: 1 idea → paragraph | 2–3 independent ideas → bullets
+**Root Cause** (if bug): 1 idea → paragraph | 2–3 independent ideas → bullets
+**Approach**: 1 idea → paragraph | 2–3 independent ideas → bullets
+
+**Rules**
+- 1 idea → paragraph
+- 2–3 independent ideas → bullets
+- >3 ideas → reduce or group (not allowed as-is)
+- Each bullet = 1 atomic idea (max 1 line)
+- Do not mix paragraph and bullets in the same block
+- Independent idea = can stand alone without needing another bullet to make sense
+- Max 3 bullets per block
 
 ### Rationale
-- Why this solution
-- Trade-offs (if relevant)
+
+**Why**
+- decision → reason (e.g., "Avoid prop drilling")
+
+**Trade-offs**
+- trade-off → impact (or "None")
+
+**Rules**
+- Format: decision → reason
+- Explain why this approach was chosen over alternatives
+- Each bullet = 1 decision with clear reason
+- Max 2–3 bullets per block
+- Use "None" consistently when not applicable
+- Avoid vague statements ("improves code", "better performance" without context)
 
 ### Key Changes
-Grouped by concern:
 
-#### [Feature / Fix / Refactor]
-- `file.ts`: what + why
-- `file2.ts`: what + why
+**Single context**
+
+| File | What | Why |
+|------|------|-----|
+| `file.ts` | what | why |
+
+**Multiple contexts (group by domain)**
+
+#### Context name (e.g., Auth, Routing, UI)
+
+| File | What | Why |
+|------|------|-----|
+| `file.ts` | what | why |
+
+**Rules**
+- Always use table format
+- Group only if there are multiple distinct domains
+- Context names must be meaningful (no "misc", "other")
+- Each row = 1 change (what + why, concise)
 
 ### Impact
-- Affected modules
-- Behavior changes
-- Breaking changes (if any)
-- Risks / edge cases
+
+**Modules**
+- affected modules
+
+**Behavior**
+- change → visible effect
+
+**Breaking**
+- change → impact (or "None")
+
+**Risks**
+- risk → consequence (or "None")
+
+**Rules**
+- Format: action/change → outcome
+- Each bullet must be specific and concrete (no vague terms)
+- Use "None" consistently when not applicable
+- Behavior = observable change (user or system)
+- Breaking = contract/API change
+- Risks = potential failure or edge case
+- Max 3–5 bullets per block
 
 ### Test Plan
-- Unit tests:
-- Manual scenarios:
-- Edge cases validated:
 
-### Risk Level
-- Low / Medium / High
-- Reason
+**Unit**
+- action → expected result
+
+**Manual**
+- action → expected result
+
+**Edge Cases**
+- condition → expected result
+
+**Rules**
+- Each bullet = 1 testable case
+- Format: condition/action → expected result
+- Max 3–5 bullets per block
+- If none applies → write "None"
+- No paragraphs
+- No generic descriptions
+- Each case must be verifiable without reading the code
+
+### Risk
+
+**Level**
+- Low / Medium / High (must choose one)
+
+**Reason**
+- cause → potential impact
 
 ### Rollback Plan
-- Revert strategy
-- Data considerations (if any)
+- Revert steps (e.g., revert commit, rollback deploy)
+- Data considerations (if any, else "None")
 
 ### Scope Check
 - Single responsibility PR: yes/no
 - Justification if no
+
+### Global Rules
+- Use "None" consistently when not applicable
+- Avoid vague or generic statements
+- Keep entries concise and scannable
+- Prefer clarity over completeness
 
 ---
 <!-- Keep PRs focused. Avoid mega-PRs. -->
