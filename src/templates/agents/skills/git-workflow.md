@@ -99,126 +99,95 @@ update docs                ← no conventional commit format
 
 ## 3. Pull Request Structure
 
+> **Note:** Blockquoted sections are formatting instructions for the AI — never include them as PR content. Sections marked `<!-- conditional -->` should only be included when their condition applies.
+
+---
+
 ### Overview
 
-**Goal**: 1 idea → paragraph | 2–3 independent ideas → bullets
-**Root Cause** (if bug): 1 idea → paragraph | 2–3 independent ideas → bullets
-**Approach**: 1 idea → paragraph | 2–3 independent ideas → bullets
+**Goal:** Paragraph or max 3 bullets
+**Root Cause:** *(bug fixes only)* Paragraph or max 3 bullets
+**Approach:** Paragraph or max 3 bullets
 
-**Rules**
-- 1 idea → paragraph
-- 2–3 independent ideas → bullets
-- >3 ideas → reduce or group (not allowed as-is)
-- Each bullet = 1 atomic idea (max 1 line)
-- Do not mix paragraph and bullets in the same block
-- Independent idea = can stand alone without needing another bullet to make sense
-- Max 3 bullets per block
+> **Formatting:**
+> 1 idea → paragraph · 2–3 independent ideas → bullets · Max 3 per block
+> Each bullet = 1 atomic idea · Do not mix paragraph and bullets
 
+---
+
+<!-- conditional: Include ONLY when trade-offs exist or the approach requires justification beyond Overview -->
 ### Rationale
 
-**Why**
-- decision → reason (e.g., "Avoid prop drilling")
+**Why:** `decision → reason` (e.g., `"Extract hook → avoid prop drilling"`)
+**Trade-offs:** `trade-off → impact` or `"None"`
 
-**Trade-offs**
-- trade-off → impact (or "None")
+> **Formatting:**
+> Max 2–3 bullets per field · Avoid vague statements without concrete context
 
-**Rules**
-- Format: decision → reason
-- Explain why this approach was chosen over alternatives
-- Each bullet = 1 decision with clear reason
-- Max 2–3 bullets per block
-- Use "None" consistently when not applicable
-- Avoid vague statements ("improves code", "better performance" without context)
+---
 
 ### Key Changes
 
-**Single context**
+**Single context:**
 
 | File | What | Why |
 |------|------|-----|
-| `file.ts` | what | why |
+| `file.ts` | Change description | Reason |
 
-**Multiple contexts (group by domain)**
-
-#### Context name (e.g., Auth, Routing, UI)
+**Multiple contexts** — group by domain (e.g., Auth, Routing, UI):
 
 | File | What | Why |
 |------|------|-----|
-| `file.ts` | what | why |
+| `file.ts` | Change description | Reason |
 
-**Rules**
-- Always use table format
-- Group only if there are multiple distinct domains
-- Context names must be meaningful (no "misc", "other")
-- Each row = 1 change (what + why, concise)
+> **Formatting:**
+> Always use table format · Group only when multiple distinct domains exist
+> Context names must be meaningful (no "misc", "other") · Each row = 1 concise change
+
+---
 
 ### Impact
 
-**Modules**
-- affected modules
+**Modules:** Affected modules list
+**Behavior:** `change → visible effect`
+**Breaking:** `change → impact` or `"None"`
+**Risks:** `risk → consequence` or `"None"`
+**Risk Level:** `Low` · `Medium` · `High`
+**Risk Reason:** `cause → potential impact`
 
-**Behavior**
-- change → visible effect
+> **Formatting:**
+> Format: `action/change → outcome` · Max 3–5 bullets per field
+> Behavior = observable change · Breaking = contract/API change
+> Risk Reason required only when Level is Medium or High
+> Use `"None"` for fields that don't apply
+> Use table format when a field has multiple items with 2+ dimensions — otherwise use bullets
 
-**Breaking**
-- change → impact (or "None")
-
-**Risks**
-- risk → consequence (or "None")
-
-**Rules**
-- Format: action/change → outcome
-- Each bullet must be specific and concrete (no vague terms)
-- Use "None" consistently when not applicable
-- Behavior = observable change (user or system)
-- Breaking = contract/API change
-- Risks = potential failure or edge case
-- Max 3–5 bullets per block
+---
 
 ### Test Plan
 
-**Unit**
-- action → expected result
+**Unit:** Summary (e.g., `All passing`, `12 new, 0 failing`, or `N/A`)
 
 **Manual**
-- action → expected result
+- [ ] `action → expected result`
 
 **Edge Cases**
-- condition → expected result
+- [ ] `condition → expected result`
 
-**Rules**
-- Each bullet = 1 testable case
-- Format: condition/action → expected result
-- Max 3–5 bullets per block
-- If none applies → write "None"
-- No paragraphs
-- No generic descriptions
-- Each case must be verifiable without reading the code
-
-### Risk
-
-**Level**
-- Low / Medium / High (must choose one)
-
-**Reason**
-- cause → potential impact
-
-### Rollback Plan
-- Revert steps (e.g., revert commit, rollback deploy)
-- Data considerations (if any, else "None")
-
-### Scope Check
-- Single responsibility PR: yes/no
-- Justification if no
-
-### Global Rules
-- Use "None" consistently when not applicable
-- Avoid vague or generic statements
-- Keep entries concise and scannable
-- Prefer clarity over completeness
+> **Formatting:**
+> Unit = one-liner referencing CI or test count — do not list individual unit tests
+> Manual and Edge Cases = checkboxes (`- [ ]`) · Max 3–5 per category
+> Each checkbox = 1 verifiable case · Omit category entirely if not applicable
 
 ---
-<!-- Keep PRs focused. Avoid mega-PRs. -->
+
+<!-- conditional: Include ONLY when rollback requires more than git revert (infra, migrations, data, breaking changes) -->
+### Rollback Plan
+
+**Revert:** Steps to undo (e.g., rollback deploy, revert migration)
+**Data:** Data considerations or `"None"`
+
+---
 
 ## 4. Forbidden Git Operations
 
