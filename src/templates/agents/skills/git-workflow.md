@@ -99,7 +99,7 @@ update docs                ← no conventional commit format
 
 ## 3. Pull Request Structure
 
-> **Note:** Blockquoted sections are formatting instructions for the AI — never include them as PR content. Sections marked `<!-- conditional -->` should only be included when their condition applies.
+> **Note:** Blockquoted sections are formatting instructions for the AI — never include them as PR content. Sections marked `<!-- conditional -->` should only be included when their condition applies. Use `##` for section headers when generating PR descriptions.
 
 ---
 
