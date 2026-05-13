@@ -21,7 +21,7 @@
     "ts"
   ],
   "author": "Juan Ignacio Jara Caceres 🇳🇮",
-  "license": "UNLICENSED",
+  "license": "SEE LICENSE IN LICENSE",
   "dependencies": {
     "commander": "^11.0.0",
     "inquirer": "^9.1.4",
