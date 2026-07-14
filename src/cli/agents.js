@@ -12,11 +12,8 @@ const SKILLS = ['git-workflow', 'staff-engineer-protocol', 'design-ui-ux'];
 const LEGACY_AGENTS_FILE = 'AGENTS.md';
 
 function getLegacyFilesExist() {
-  const legacyFiles = [
-    LEGACY_AGENTS_FILE,
-    ...SKILLS.map(s => `skills/${s}/SKILL.md`)
-  ];
-  return legacyFiles.filter(f => existsSync(f));
+  const legacyFiles = [LEGACY_AGENTS_FILE, ...SKILLS.map((s) => `skills/${s}/SKILL.md`)];
+  return legacyFiles.filter((f) => existsSync(f));
 }
 
 function generateFileMode() {
@@ -58,8 +55,8 @@ async function generateMemoryMode() {
         type: 'confirm',
         name: 'migrate',
         message: `⚠️ Detected legacy files: ${legacyFiles.join(', ')}. Migrate to memory mode?`,
-        default: true
-      }
+        default: true,
+      },
     ]);
 
     if (!migrate) {

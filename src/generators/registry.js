@@ -4,6 +4,7 @@ import { getPrettierContent } from './prettier.js';
 import { getTsconfigContent } from './tsconfig.js';
 import { getEnvContent } from './env.js';
 import { getAgentsContent } from './agents.js';
+import { getMemoryContent } from './memory.js';
 import { getGitignoreContent } from './gitignore.js';
 import { getEslintContent } from './eslint.js';
 
@@ -13,23 +14,29 @@ const LOG_MESSAGES = {
   'eslint.config.js': '🔍 eslint.config.js generated as linting companion for Prettier!',
   'tsconfig.json': '📄 tsconfig.json generated with best practices!',
   '.env': '🔐 .env generated with basic variables!',
-  'AGENTS.md': '🤖 AGENTS.md generated with AI guidelines!',
-  'skills/git-workflow.md': '📋 skills/git-workflow.md generated with git workflow guidelines!',
-  '.gitignore': '🚫 .gitignore generated for JS/TS projects!'
+  'skills/git-workflow/SKILL.md': '📋 skills/git-workflow/SKILL.md generated!',
+  'skills/staff-engineer-protocol/SKILL.md':
+    '📋 skills/staff-engineer-protocol/SKILL.md generated!',
+  'skills/design-ui-ux/SKILL.md': '📋 skills/design-ui-ux/SKILL.md generated!',
+  '.gitignore': '🚫 .gitignore generated for JS/TS projects!',
 };
 
 const registry = [
   { name: 'Biome', group: 'linter', getContent: () => getBiomeContent() },
   { name: 'Prettier', group: 'linter', getContent: () => getPrettierContent() },
   { name: 'ESLint', group: 'eslint-companion', getContent: () => getEslintContent() },
-  { name: 'tsconfig', group: 'tsconfig', getContent: (opts) => getTsconfigContent(opts.enableAlias) },
+  {
+    name: 'tsconfig',
+    group: 'tsconfig',
+    getContent: (opts) => getTsconfigContent(opts.enableAlias),
+  },
   { name: 'env', group: 'env', getContent: (opts) => getEnvContent(opts.profile) },
-  { name: 'agents', group: 'agents', getContent: () => getAgentsContent() },
-  { name: 'gitignore', group: 'gitignore', getContent: () => getGitignoreContent() }
+  { name: 'agents', group: 'agents', getContent: (opts) => getAgentsContent(opts.agentsMode) },
+  { name: 'gitignore', group: 'gitignore', getContent: () => getGitignoreContent() },
 ];
 
 function resolveFiles(answers, profile) {
-  const opts = { enableAlias: answers.enableAlias, profile };
+  const opts = { enableAlias: answers.enableAlias, profile, agentsMode: answers.agentsMode };
   const selected = [];
 
   for (const entry of registry) {
@@ -38,7 +45,7 @@ function resolveFiles(answers, profile) {
     if (entry.group === 'eslint-companion' && answers.linter !== 'Prettier') continue;
     if (entry.group === 'tsconfig' && !answers.tsconfig) continue;
     if (entry.group === 'env' && !answers.env) continue;
-    if (entry.group === 'agents' && !answers.agents) continue;
+    if (entry.group === 'agents' && answers.agentsMode === 'none') continue;
     if (entry.group === 'gitignore' && !answers.gitignore) continue;
 
     const result = entry.getContent(opts);
@@ -52,8 +59,9 @@ function resolveFiles(answers, profile) {
             await fs.ensureDir(content.dir);
           }
           await fs.writeFile(content.filename, content.content);
-          console.log(LOG_MESSAGES[content.filename]);
-        }
+          const logMsg = LOG_MESSAGES[content.filename] || `✅ ${content.filename} generated!`;
+          console.log(logMsg);
+        },
       });
     }
   }

@@ -1,11 +1,22 @@
 import inquirer from 'inquirer';
-import { detectProjectType, detectExistingQualityTool, isTypeScriptProject } from '../utils/detectors.js';
+import {
+  detectProjectType,
+  detectExistingQualityTool,
+  isTypeScriptProject,
+} from '../utils/detectors.js';
 
 async function collectAnswers(profile) {
   const projectType = detectProjectType();
   const isTs = isTypeScriptProject();
 
-  let answers = { linter: 'Biome', env: true, agents: true, gitignore: true, tsconfig: false, enableAlias: false };
+  let answers = {
+    linter: 'Biome',
+    env: true,
+    agentsMode: 'file',
+    gitignore: true,
+    tsconfig: false,
+    enableAlias: false,
+  };
 
   if (process.stdout.isTTY) {
     answers = await collectInteractiveAnswers(projectType, isTs, profile);
@@ -32,16 +43,24 @@ async function collectAnswers(profile) {
 }
 
 async function collectInteractiveAnswers(projectType, isTs, profile) {
-  let answers = { linter: 'Biome', env: true, agents: true, gitignore: true, tsconfig: false, enableAlias: false };
+  let answers = {
+    linter: 'Biome',
+    env: true,
+    agentsMode: 'file',
+    gitignore: true,
+    tsconfig: false,
+    enableAlias: false,
+  };
 
   // Ask linter question first to detect conflicts immediately
   if (projectType === 'js/ts') {
     const linterAnswer = await inquirer.prompt({
       type: 'list',
       name: 'linter',
-      message: 'Choose your code quality tool (Biome: linter + formatter, Prettier: formatter + ESLint for JS):',
+      message:
+        'Choose your code quality tool (Biome: linter + formatter, Prettier: formatter + ESLint for JS):',
       choices: ['Biome', 'Prettier', 'None'],
-      default: 'Biome'
+      default: 'Biome',
     });
 
     answers.linter = linterAnswer.linter;
@@ -57,7 +76,7 @@ async function collectInteractiveAnswers(projectType, isTs, profile) {
           type: 'confirm',
           name: 'replace',
           message: `Do you want to replace it with ${answers.linter}?`,
-          default: false
+          default: false,
         });
 
         if (!replace) {
@@ -75,14 +94,14 @@ async function collectInteractiveAnswers(projectType, isTs, profile) {
       type: 'confirm',
       name: 'tsconfig',
       message: 'Generate a tsconfig.json file with best practices?',
-      default: true
+      default: true,
     });
     remainingQuestions.push({
       type: 'confirm',
       name: 'enableAlias',
       message: 'Enable path aliases (e.g., @/* for src/*)?',
       default: true,
-      when: (a) => a.tsconfig
+      when: (a) => a.tsconfig,
     });
   }
 
@@ -90,7 +109,7 @@ async function collectInteractiveAnswers(projectType, isTs, profile) {
     type: 'confirm',
     name: 'env',
     message: 'Create .env file with basic environment variables?',
-    default: true
+    default: true,
   });
 
   if (!profile) {
@@ -100,7 +119,7 @@ async function collectInteractiveAnswers(projectType, isTs, profile) {
       message: 'What type of project is this?',
       choices: ['backend', 'frontend'],
       default: 'backend',
-      when: (a) => a.env
+      when: (a) => a.env,
     });
   }
 
@@ -108,14 +127,19 @@ async function collectInteractiveAnswers(projectType, isTs, profile) {
     type: 'confirm',
     name: 'gitignore',
     message: 'Generate a .gitignore file for JS/TS projects?',
-    default: true
+    default: true,
   });
 
   remainingQuestions.push({
-    type: 'confirm',
-    name: 'agents',
-    message: 'Create AGENTS.md with instructions for AI tools?',
-    default: true
+    type: 'list',
+    name: 'agentsMode',
+    message: 'How do you want to configure AI agents?',
+    choices: [
+      { name: 'File mode (skills/ directories)', value: 'file' },
+      { name: 'Memory mode (~/.ai_brain/shared_memory.json)', value: 'memory' },
+      { name: 'None', value: 'none' },
+    ],
+    default: 'file',
   });
 
   const remainingAnswers = await inquirer.prompt(remainingQuestions);
@@ -133,7 +157,7 @@ async function confirmOverwrite(differing) {
       type: 'confirm',
       name: 'overwrite',
       message: 'Do you want to overwrite them?',
-      default: false
+      default: false,
     });
     return answer.overwrite;
   }

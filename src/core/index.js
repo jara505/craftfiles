@@ -1,8 +1,10 @@
+import inquirer from 'inquirer';
 import { VALID_PROFILES } from './constants.js';
 import { collectAnswers, confirmOverwrite } from '../cli/prompts.js';
 import { resolveFiles } from '../generators/registry.js';
 import { classifyFiles } from '../utils/file-comparator.js';
 import { updateManifest } from '../utils/manifest.js';
+import { memoryExists } from '../utils/memory-comparator.js';
 
 async function initCommand(options = {}) {
   try {
@@ -17,6 +19,29 @@ async function initCommand(options = {}) {
 
     const answers = await collectAnswers(profile);
     const selectedProfile = profile || answers.profile || 'backend';
+
+    // Cross-mode detection: if user selected memory but has legacy files
+    if (answers.agentsMode === 'memory') {
+      const { existsSync } = await import('fs');
+      const legacyFiles = ['AGENTS.md', 'skills/git-workflow.md'].filter((f) => existsSync(f));
+
+      if (legacyFiles.length > 0) {
+        const { migrate } = await inquirer.prompt([
+          {
+            type: 'confirm',
+            name: 'migrate',
+            message: `⚠️ Detected legacy files: ${legacyFiles.join(', ')}. Migrate to memory mode?`,
+            default: true,
+          },
+        ]);
+
+        if (!migrate) {
+          console.log('Init cancelled. Resolve conflicts manually.');
+          return;
+        }
+      }
+    }
+
     const intendedFiles = resolveFiles(answers, selectedProfile);
 
     if (intendedFiles.length === 0) {
@@ -49,7 +74,7 @@ async function initCommand(options = {}) {
       await file.generate();
     }
 
-    await updateManifest(filesToWrite, selectedProfile);
+    await updateManifest(filesToWrite, selectedProfile, answers.agentsMode);
 
     console.log('Done! Files generated. 🎉');
   } catch (error) {

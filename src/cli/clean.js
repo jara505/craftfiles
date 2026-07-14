@@ -23,14 +23,14 @@ async function cleanCommand() {
     // Only AGENTS.md and/or skills/ exist (standalone mode)
     const found = [agentsExists && AGENTS_FILE, skillsExists && `${SKILLS_DIR}/`].filter(Boolean);
     console.log(`Found: ${found.join(', ')}`);
-    
+
     let confirm = true;
     if (process.stdout.isTTY) {
       const answer = await inquirer.prompt({
         type: 'confirm',
         name: 'confirm',
         message: 'Remove these files?',
-        default: false
+        default: false,
       });
       confirm = answer.confirm;
     }
@@ -57,7 +57,7 @@ async function cleanCommand() {
     return;
   }
 
-  const existingFiles = manifest.files.filter(file => fs.existsSync(file));
+  const existingFiles = manifest.files.filter((file) => fs.existsSync(file));
 
   if (existingFiles.length === 0) {
     console.log('No generated files found on disk. Cleaning up manifest.');
@@ -73,7 +73,7 @@ async function cleanCommand() {
       type: 'confirm',
       name: 'confirm',
       message: 'Remove these files?',
-      default: false
+      default: false,
     });
     confirm = answer.confirm;
   }
@@ -83,7 +83,7 @@ async function cleanCommand() {
       await fs.remove(file);
       console.log(`🗑️ Removed ${file}`);
     }
-    
+
     // Remove AGENTS.md and skills/ only if not already handled by manifest
     if (agentsExists && !existingFiles.includes(AGENTS_FILE)) {
       await fs.remove(AGENTS_FILE);
@@ -95,7 +95,7 @@ async function cleanCommand() {
       await fs.remove(SKILLS_DIR);
       console.log(`🗑️ Removed ${SKILLS_DIR}/`);
     }
-    
+
     await fs.remove(MANIFEST_PATH);
     console.log('🗑️ Removed .craftfiles.json');
     console.log('Clean completed! 🧽');
