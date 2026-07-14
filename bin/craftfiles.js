@@ -44,7 +44,8 @@ program
 
 program
   .command('agents')
-  .description('Generate AGENTS.md and skills/ (language-agnostic, no manifest created)')
-  .action(() => agentsCommand());
+  .description('Generate AI agent config (file mode: skills/, memory mode: ~/.ai_brain/shared_memory.json)')
+  .option('--mode <mode>', 'Generation mode: file or memory (required)')
+  .action((options) => agentsCommand(options));
 
 program.parse();
