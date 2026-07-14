@@ -33,7 +33,7 @@ program
     outputError: () => {
       console.error('❌ Unknown arguments. Run "craftfiles init --help" for more information.');
       process.exit(1);
-    }
+    },
   })
   .action((options) => initCommand(options));
 
@@ -44,7 +44,9 @@ program
 
 program
   .command('agents')
-  .description('Generate AI agent config (file mode: skills/, memory mode: ~/.ai_brain/shared_memory.json)')
+  .description(
+    'Generate AI agent config (file mode: skills/, memory mode: ~/.ai_brain/shared_memory.json)'
+  )
   .option('--mode <mode>', 'Generation mode: file or memory (required)')
   .action((options) => agentsCommand(options));
 

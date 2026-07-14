@@ -9,25 +9,25 @@ const skillsDir = join(__dirname, '..', 'templates', 'agents', 'skills');
 const SKILLS = ['git-workflow', 'staff-engineer-protocol', 'design-ui-ux'];
 
 function getMemoryContent() {
-  const entities = SKILLS.map(skillName => {
+  const entities = SKILLS.map((skillName) => {
     const skillPath = join(skillsDir, skillName, 'SKILL.md');
     const content = fs.readFileSync(skillPath, 'utf-8');
     return {
       name: skillName,
       entityType: 'skill',
-      observations: [content]
+      observations: [content],
     };
   });
 
   const memoryData = {
     entities,
-    relations: []
+    relations: [],
   };
 
   return {
     filename: MEMORY_FILE,
     dir: MEMORY_DIR,
-    content: JSON.stringify(memoryData, null, 2)
+    content: JSON.stringify(memoryData, null, 2),
   };
 }
 
