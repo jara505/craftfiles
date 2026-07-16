@@ -1,63 +1,205 @@
 # CraftFiles
 
-[![npm](https://img.shields.io/npm/v/@jara505/craftfiles)](https://www.npmjs.com/package/@jara505/craftfiles)
+<p align="center">
+  <strong>Opinionated configuration files for JavaScript & TypeScript projects.</strong>
+</p>
 
-CraftFiles is not a project generator. It's a post-setup config injector for JavaScript and TypeScript projects.
+<p align="center">
+  Configure existing projects in minutes—not hours.
+</p>
 
-You already have your project. CraftFiles gives you opinionated, ready-to-use configuration files in a single command — no more copying from StackOverflow or running multiple CLIs.
+<p align="center">
+  <a href="https://www.npmjs.com/package/@jara505/craftfiles">
+    <img src="https://img.shields.io/npm/v/@jara505/craftfiles" alt="npm version">
+  </a>
+  <img src="https://img.shields.io/node/v/@jara505/craftfiles" alt="Node.js">
+  <img src="https://img.shields.io/npm/dm/@jara505/craftfiles" alt="Downloads">
+</p>
 
-## Features
+---
 
-- **Not a scaffolder** — works on existing projects, injects config only
-- **Opinionated defaults** — every generated file comes with production-ready settings
-- **Profile system** — `.env` adapts to backend or frontend contexts
-- **Conflict detection** — detects existing Biome/Prettier configs and warns before overwriting
-- **ESLint companion** — automatically generates `eslint.config.js` when Prettier is selected as linting companion
-- **TypeScript aware** — detects TS projects and offers `tsconfig.json` with optional path aliases
-- **Skills system** — generates `skills/git-workflow.md` alongside AGENTS.md for structured AI workflow guidelines
-- **Manifest tracking** — tracks generated files in `.craftfiles.json` for clean removal via `craftfiles clean`
+## What is CraftFiles?
+
+CraftFiles is a CLI that injects production-ready configuration files into existing JavaScript and TypeScript projects.
+
+It **does not scaffold applications**, generate boilerplate, or create project templates.
+
+Instead, it helps you standardize your projects by generating the configuration files you actually need—all through a single interactive command.
+
+```bash
+craftfiles init
+```
+
+---
+
+## Why CraftFiles?
+
+Setting up a project often means repeating the same work:
+
+- Searching for a good `tsconfig.json`
+- Copying `.gitignore` from an old repository
+- Choosing between Biome, ESLint, or Prettier
+- Creating `.env` examples
+- Configuring AI assistants
+- Making everything work together
+
+CraftFiles replaces that repetitive setup with one guided workflow while letting you decide exactly what gets generated.
+
+---
+
+## What can CraftFiles generate?
+
+- ⚡ Biome configuration
+- 🎨 Prettier configuration
+- 📏 ESLint configuration
+- 🟦 TypeScript configuration
+- 🌱 Environment variable templates
+- 🚫 `.gitignore`
+- 🤖 AI agent configuration
+- 🧹 Manifest tracking for safe cleanup
+
+Every configuration is independent—you generate only what your project needs.
+
+---
 
 ## Installation
 
-> Requires Node.js >= 18
+> Requires **Node.js 18+**
 
 ```bash
 npm install -g @jara505/craftfiles
 ```
 
-## Commands
+---
 
-| Command | Description |
-|---|---|
-| `craftfiles init` | Generate config files interactively |
-| `craftfiles init --env <profile>` | Set .env profile (`backend` or `frontend`) |
-| `craftfiles agents` | Generate AGENTS.md and skills/ (language-agnostic, no manifest) |
-| `craftfiles clean` | Remove generated config files |
-| `craftfiles --creator` | Display creator info |
-| `craftfiles --version` | Show version |
-
-## Example
+## Quick Start
 
 ```bash
-$ craftfiles init
-Welcome to CraftFiles! 🔨
-? Choose your code quality tool (Biome: linter + formatter in one, Prettier: formatter only): Biome
-? Generate a tsconfig.json file with best practices? Yes
-? Create .env file with basic environment variables? Yes
-? What type of project is this? backend
-? Generate a .gitignore file for JS/TS projects? Yes
-? Create AGENTS.md with instructions for AI tools? Yes
-⚙️ biome.json generated with best practices for JS/TS!
-📄 tsconfig.json generated with best practices!
-🔐 .env generated with basic variables!
-🚫 .gitignore generated for JS/TS projects!
-🤖 AGENTS.md generated with AI guidelines!
-📋 skills/git-workflow.md generated with git workflow guidelines!
-Done! Files generated. 🎉
+craftfiles init
 ```
 
-## License
+Example:
 
-© 2025-2026 Juan Ignacio Jara Caceres. All rights reserved.
+```text
+Welcome to CraftFiles 🔨
 
-This project is proprietary software. You may not distribute, modify, or create derivative works without explicit written permission from the author.
+✔ Code quality tool · Biome
+✔ Generate tsconfig.json · Yes
+✔ Create .env file · Yes
+✔ Project profile · Backend
+✔ Generate .gitignore · Yes
+✔ Configure AI agents · File Skills
+
+✔ biome.json created
+✔ tsconfig.json created
+✔ .env created
+✔ .gitignore created
+✔ skills/git-workflow/SKILL.md created
+✔ skills/staff-engineer-protocol/SKILL.md created
+✔ skills/design-ui-ux/SKILL.md created
+
+Done.
+```
+
+---
+
+# Commands
+
+| Command | Description |
+|----------|-------------|
+| `craftfiles init` | Interactive configuration wizard |
+| `craftfiles init --env <profile>` | Select an environment profile |
+| `craftfiles agents --mode <mode>` | Generate AI agent configuration |
+| `craftfiles clean` | Remove generated files created by CraftFiles |
+| `craftfiles --version` | Show version |
+| `craftfiles --creator` | Show author information |
+
+---
+
+# AI Integration
+
+CraftFiles supports two approaches for AI agent configuration.
+
+The generated prompts are identical—the difference is **where they live**.
+
+## File Mode
+
+Generate repository-local skills.
+
+```
+skills/
+├── git-workflow/
+│   └── SKILL.md
+├── staff-engineer-protocol/
+│   └── SKILL.md
+└── design-ui-ux/
+    └── SKILL.md
+```
+
+### Best for
+
+- Open source repositories
+- Team collaboration
+- Version-controlled prompts
+- Projects that should be self-contained
+
+Compatible with AI agents that support repository-based skill files.
+
+```bash
+craftfiles agents --mode file
+```
+
+---
+
+## Memory Mode (MCP)
+
+Generate a shared memory file outside your repository.
+
+```
+~/.ai_brain/shared_memory.json
+```
+
+CraftFiles also prints the MCP configuration snippet required by your AI agent.
+
+### Best for
+
+- Working across multiple projects
+- Maintaining a single source of truth for AI instructions
+- Avoiding duplicated prompt files in every repository
+- Updating shared knowledge once instead of per project
+
+```bash
+craftfiles agents --mode memory
+```
+
+---
+
+## Which mode should I choose?
+
+Choose **File Mode** when AI instructions belong to the project and should be committed alongside the source code.
+
+Choose **Memory Mode** when the same knowledge should be shared across multiple repositories through MCP Memory.
+
+Both approaches are fully supported by CraftFiles—you decide which workflow fits your projects.
+
+---
+
+# Design Principles
+
+CraftFiles is built around a few simple ideas.
+
+- Configure existing projects—not scaffold new ones.
+- Opinionated defaults over endless configuration.
+- Generate only what you need.
+- Keep configurations easy to maintain.
+- Track generated files for safe cleanup.
+
+---
+
+# License
+
+Copyright © 2025–2026 Juan Ignacio Jara Caceres.
+
+This project is proprietary software.
+
+You may not redistribute, modify, or create derivative works without explicit written permission from the author.

@@ -40,7 +40,8 @@ program
 program
   .command('clean')
   .description('Remove generated config files')
-  .action(() => cleanCommand());
+  .option('--mode <mode>', 'Clean mode: file or memory (required)')
+  .action((options) => cleanCommand(options));
 
 program
   .command('agents')
