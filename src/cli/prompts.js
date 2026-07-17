@@ -1,9 +1,20 @@
+import { existsSync, readdirSync } from 'fs';
 import inquirer from 'inquirer';
 import {
   detectProjectType,
   detectExistingQualityTool,
   isTypeScriptProject,
 } from '../utils/detectors.js';
+import { MEMORY_FILE } from '../core/constants.js';
+
+function detectExistingAgentsMode() {
+  if (existsSync(MEMORY_FILE)) return 'memory';
+  if (existsSync('skills')) {
+    const entries = readdirSync('skills');
+    if (entries.length > 0) return 'file';
+  }
+  return null;
+}
 
 async function collectAnswers(profile) {
   const projectType = detectProjectType();
@@ -130,16 +141,27 @@ async function collectInteractiveAnswers(projectType, isTs, profile) {
     default: true,
   });
 
+  const existingMode = detectExistingAgentsMode();
+  const agentsChoices = [];
+
+  if (existingMode === 'memory') {
+    agentsChoices.push({ name: 'Memory mode (~/.ai_brain/shared_memory.json)', value: 'memory' });
+    agentsChoices.push({ name: 'None', value: 'none' });
+  } else if (existingMode === 'file') {
+    agentsChoices.push({ name: 'File mode (skills/ directories)', value: 'file' });
+    agentsChoices.push({ name: 'None', value: 'none' });
+  } else {
+    agentsChoices.push({ name: 'File mode (skills/ directories)', value: 'file' });
+    agentsChoices.push({ name: 'Memory mode (~/.ai_brain/shared_memory.json)', value: 'memory' });
+    agentsChoices.push({ name: 'None', value: 'none' });
+  }
+
   remainingQuestions.push({
     type: 'list',
     name: 'agentsMode',
     message: 'How do you want to configure AI agents?',
-    choices: [
-      { name: 'File mode (skills/ directories)', value: 'file' },
-      { name: 'Memory mode (~/.ai_brain/shared_memory.json)', value: 'memory' },
-      { name: 'None', value: 'none' },
-    ],
-    default: 'file',
+    choices: agentsChoices,
+    default: agentsChoices[0]?.value || 'none',
   });
 
   const remainingAnswers = await inquirer.prompt(remainingQuestions);

@@ -1,8 +1,8 @@
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync, mkdirSync, rmSync, readdirSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import inquirer from 'inquirer';
-import { VALID_AGENTS_MODES } from '../core/constants.js';
+import { VALID_AGENTS_MODES, MEMORY_FILE } from '../core/constants.js';
 import { getMemoryContent, getMcpSnippet } from '../generators/memory.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -17,6 +17,14 @@ function getLegacyFilesExist() {
 }
 
 function generateFileMode() {
+  // Detect if memory mode exists
+  if (existsSync(MEMORY_FILE)) {
+    console.log(`⚠️  Memory mode detected: ${MEMORY_FILE}`);
+    console.log('File mode and memory mode are mutually exclusive.');
+    console.log('Run `craftfiles clean` first, then retry.');
+    process.exit(1);
+  }
+
   const skillsDir = join(__dirname, '..', 'templates', 'agents', 'skills');
   let created = 0;
 
@@ -48,13 +56,32 @@ function generateFileMode() {
 }
 
 async function generateMemoryMode() {
+  // Check if memory file already exists
+  if (existsSync(MEMORY_FILE)) {
+    const { overwrite } = await inquirer.prompt([
+      {
+        type: 'confirm',
+        name: 'overwrite',
+        message: `⚠️ Memory file already exists: ${MEMORY_FILE}. Overwrite?`,
+        default: false,
+      },
+    ]);
+
+    if (!overwrite) {
+      console.log('❌ Memory generation cancelled.');
+      return;
+    }
+  }
+
   const legacyFiles = getLegacyFilesExist();
-  if (legacyFiles.length > 0) {
+  const hasSkillsDir = existsSync('skills') && readdirSync('skills').length > 0;
+
+  if (legacyFiles.length > 0 || hasSkillsDir) {
     const { migrate } = await inquirer.prompt([
       {
         type: 'confirm',
         name: 'migrate',
-        message: `⚠️ Detected legacy files: ${legacyFiles.join(', ')}. Migrate to memory mode?`,
+        message: '⚠️ Detected file mode (skills/). Switch to memory mode?',
         default: true,
       },
     ]);
@@ -63,6 +90,10 @@ async function generateMemoryMode() {
       console.log('❌ Memory generation cancelled.');
       return;
     }
+
+    // Clean file mode artifacts
+    rmSync('skills', { recursive: true, force: true });
+    console.log('🧹 Removed skills/ directory.');
   }
 
   const memory = getMemoryContent();

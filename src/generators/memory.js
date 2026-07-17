@@ -32,7 +32,7 @@ function getMemoryContent() {
 }
 
 function getMcpSnippet() {
-  return `\n📋 Copiá este snippet y pegalo en la sección "mcpServers" de la configuración de tu agente de IA (opencode.json, claude_desktop_config.json, o el que correspondan).\n
+  return `\n📋 Copy this snippet and paste it into the "mcpServers" section of your AI agent config (opencode.json, claude_desktop_config.json, or equivalent).\n
 {
   "mcpServers": {
     "memory": {

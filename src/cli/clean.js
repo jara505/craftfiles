@@ -1,100 +1,138 @@
 import fs from 'fs-extra';
 import { dirname } from 'path';
 import inquirer from 'inquirer';
-import { MANIFEST_PATH, MEMORY_FILE, VALID_AGENTS_MODES } from '../core/constants.js';
+import { readManifest } from '../utils/manifest.js';
+import { MEMORY_FILE } from '../core/constants.js';
 
-const SKILLS = ['git-workflow', 'staff-engineer-protocol', 'design-ui-ux'];
-
-function getSkillDirs() {
-  return SKILLS.map((s) => `skills/${s}`);
+function collectParentDirs(filePaths) {
+  const dirs = new Set();
+  for (const fp of filePaths) {
+    let dir = dirname(fp);
+    while (dir && dir !== '.' && dir !== '/') {
+      dirs.add(dir);
+      dir = dirname(dir);
+    }
+  }
+  return [...dirs].sort((a, b) => b.split('/').length - a.split('/').length);
 }
 
-async function cleanCommand(options = {}) {
-  const mode = options.mode;
+function buildSummary(files, hasMemory) {
+  const lines = [];
 
-  if (!mode || !VALID_AGENTS_MODES.includes(mode)) {
-    console.error('❌ You must specify a mode: --mode file | --mode memory');
-    console.log('   Example: craftfiles clean --mode file');
-    console.log('   Example: craftfiles clean --mode memory');
+  if (files.length > 0) {
+    const examples = files.slice(0, 3).join(', ');
+    const suffix = files.length > 3 ? `, +${files.length - 3} more` : '';
+    lines.push(
+      `  • ${files.length} project file${files.length > 1 ? 's' : ''} (${examples}${suffix})`
+    );
+  }
+
+  if (hasMemory) {
+    lines.push(`  • 1 memory file (${MEMORY_FILE})`);
+  }
+
+  lines.push('  • .craftfiles.json (manifest)');
+
+  return lines.join('\n');
+}
+
+async function cleanCommand() {
+  const manifest = readManifest();
+
+  if (!manifest || Object.keys(manifest).length === 0) {
+    console.error('❌ No CraftFiles project found. Run `craftfiles init` first.');
     process.exit(1);
   }
 
-  console.log('🧹 CraftFiles Clean Mode');
+  const files = manifest.files || [];
+  const hasMemory = manifest.agentsMode === 'memory';
 
-  if (mode === 'file') {
-    await cleanFileMode();
-  } else if (mode === 'memory') {
-    await cleanMemoryMode();
-  }
-}
-
-async function cleanFileMode() {
-  const skillDirs = getSkillDirs();
-  const existingDirs = skillDirs.filter((dir) => fs.existsSync(dir));
-
-  if (existingDirs.length === 0) {
-    console.log('No skills/ directories found. Nothing to clean.');
+  if (files.length === 0 && !hasMemory) {
+    console.log('Nothing to clean.');
     return;
   }
 
-  console.log(`Found: ${existingDirs.join(', ')}`);
+  console.log('🧹 CraftFiles Clean\n');
+  console.log('Will remove:');
+  console.log(buildSummary(files, hasMemory));
 
   let confirm = true;
   if (process.stdout.isTTY) {
     const answer = await inquirer.prompt({
       type: 'confirm',
       name: 'confirm',
-      message: 'Remove these directories?',
+      message: 'Remove all?',
       default: false,
     });
     confirm = answer.confirm;
   }
 
-  if (confirm) {
-    for (const dir of existingDirs) {
-      await fs.remove(dir);
-      console.log(`🗑️  Removed ${dir}/`);
-    }
-    console.log('Clean completed! 🧽');
-  } else {
+  if (!confirm) {
     console.log('Clean cancelled.');
-  }
-}
-
-async function cleanMemoryMode() {
-  if (!fs.existsSync(MEMORY_FILE)) {
-    console.log(`Memory file not found: ${MEMORY_FILE}. Nothing to clean.`);
     return;
   }
 
-  console.log(`Found: ${MEMORY_FILE}`);
+  let removed = 0;
+  let errors = 0;
 
-  let confirm = true;
-  if (process.stdout.isTTY) {
-    const answer = await inquirer.prompt({
-      type: 'confirm',
-      name: 'confirm',
-      message: 'Remove memory file?',
-      default: false,
-    });
-    confirm = answer.confirm;
-  }
-
-  if (confirm) {
-    await fs.remove(MEMORY_FILE);
-    console.log(`🗑️  Removed ${MEMORY_FILE}`);
-
-    // Remove .ai_brain dir if empty
-    const memoryDir = dirname(MEMORY_FILE);
-    if (fs.existsSync(memoryDir) && fs.readdirSync(memoryDir).length === 0) {
-      await fs.remove(memoryDir);
-      console.log(`🗑️  Removed ${memoryDir}/`);
+  // Delete tracked files
+  for (const f of files) {
+    try {
+      if (fs.existsSync(f)) {
+        await fs.remove(f);
+        removed++;
+      }
+    } catch {
+      errors++;
     }
-
-    console.log('Clean completed! 🧽');
-  } else {
-    console.log('Clean cancelled.');
   }
+
+  // Delete memory file if mode was memory
+  if (hasMemory) {
+    try {
+      if (fs.existsSync(MEMORY_FILE)) {
+        await fs.remove(MEMORY_FILE);
+        removed++;
+      }
+    } catch {
+      errors++;
+    }
+  }
+
+  // Clean empty parent directories
+  const parentDirs = collectParentDirs(files);
+  for (const dir of parentDirs) {
+    try {
+      if (fs.existsSync(dir) && fs.readdirSync(dir).length === 0) {
+        await fs.remove(dir);
+      }
+    } catch {
+      // Skip
+    }
+  }
+
+  // Clean .ai_brain if empty
+  if (hasMemory) {
+    const memDir = dirname(MEMORY_FILE);
+    try {
+      if (fs.existsSync(memDir) && fs.readdirSync(memDir).length === 0) {
+        await fs.remove(memDir);
+      }
+    } catch {
+      // Skip
+    }
+  }
+
+  // Delete manifest last
+  try {
+    await fs.remove('.craftfiles.json');
+    removed++;
+  } catch {
+    errors++;
+  }
+
+  const status = errors > 0 ? ` (${errors} errors)` : '';
+  console.log(`\n✅ Clean completed — ${removed} file${removed !== 1 ? 's' : ''} removed${status}`);
 }
 
 export { cleanCommand };

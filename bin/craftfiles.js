@@ -39,9 +39,8 @@ program
 
 program
   .command('clean')
-  .description('Remove generated config files')
-  .option('--mode <mode>', 'Clean mode: file or memory (required)')
-  .action((options) => cleanCommand(options));
+  .description('Remove all generated config files')
+  .action(() => cleanCommand());
 
 program
   .command('agents')

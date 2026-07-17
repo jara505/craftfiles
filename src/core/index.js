@@ -1,10 +1,10 @@
 import inquirer from 'inquirer';
-import { VALID_PROFILES } from './constants.js';
+import { existsSync, readdirSync, rmSync } from 'fs';
+import { VALID_PROFILES, MEMORY_FILE } from './constants.js';
 import { collectAnswers, confirmOverwrite } from '../cli/prompts.js';
 import { resolveFiles } from '../generators/registry.js';
 import { classifyFiles } from '../utils/file-comparator.js';
 import { updateManifest } from '../utils/manifest.js';
-import { memoryExists } from '../utils/memory-comparator.js';
 
 async function initCommand(options = {}) {
   try {
@@ -20,17 +20,16 @@ async function initCommand(options = {}) {
     const answers = await collectAnswers(profile);
     const selectedProfile = profile || answers.profile || 'backend';
 
-    // Cross-mode detection: if user selected memory but has legacy files
+    // Cross-mode detection: if user selected memory but has file mode active
     if (answers.agentsMode === 'memory') {
-      const { existsSync } = await import('fs');
-      const legacyFiles = ['AGENTS.md', 'skills/git-workflow.md'].filter((f) => existsSync(f));
+      const hasSkillsDir = existsSync('skills') && readdirSync('skills').length > 0;
 
-      if (legacyFiles.length > 0) {
+      if (hasSkillsDir) {
         const { migrate } = await inquirer.prompt([
           {
             type: 'confirm',
             name: 'migrate',
-            message: `⚠️ Detected legacy files: ${legacyFiles.join(', ')}. Migrate to memory mode?`,
+            message: '⚠️ Detected file mode (skills/). Switch to memory mode?',
             default: true,
           },
         ]);
@@ -38,6 +37,27 @@ async function initCommand(options = {}) {
         if (!migrate) {
           console.log('Init cancelled. Resolve conflicts manually.');
           return;
+        }
+
+        // Clean file mode artifacts
+        rmSync('skills', { recursive: true, force: true });
+        console.log('🧹 Removed skills/ directory.');
+      }
+
+      // Check if memory file already exists
+      if (existsSync(MEMORY_FILE)) {
+        const { overwrite } = await inquirer.prompt([
+          {
+            type: 'confirm',
+            name: 'overwrite',
+            message: `⚠️ Memory file already exists: ${MEMORY_FILE}. Overwrite?`,
+            default: false,
+          },
+        ]);
+
+        if (!overwrite) {
+          console.log('Memory generation skipped.');
+          answers.agentsMode = 'none';
         }
       }
     }
