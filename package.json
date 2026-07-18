@@ -1,6 +1,6 @@
 {
   "name": "@jara505/craftfiles",
-  "version": "2.2.6",
+  "version": "2.3.0",
   "description": "A CLI tool to initialize and generate config files for JS/TS projects",
   "type": "module",
   "main": "bin/craftfiles.js",
